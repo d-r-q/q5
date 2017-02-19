@@ -1,0 +1,109 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/dark_bg"
+    android:padding="@dimen/widget_margin">
+
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button11"
+            style="@style/Q5Btn"
+             />
+
+        <Button
+            android:id="@+id/button12"
+            android:text="Дом"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button13"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button14"
+            style="@style/Q5Btn" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button21"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button22"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button23"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button24"
+            style="@style/Q5Btn" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button31"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button32"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button33"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button34"
+            style="@style/Q5Btn" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button41"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button42"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button43"
+            style="@style/Q5Btn" />
+
+        <Button
+            android:id="@+id/button44"
+            style="@style/Q5Btn" />
+
+    </LinearLayout>
+</LinearLayout>
