@@ -41,6 +41,7 @@ class EnterSumActivity : Activity() {
 
     fun onOk() {
         val sum = find<EditText>(R.id.sum_input).text.toString()
+        val comment = find<EditText>(R.id.comment_input).text.toString()
         val category = intent.getStringExtra("category") ?: ""
         if (sum.isBlank()) {
             toast("Введите сумму")
@@ -51,14 +52,14 @@ class EnterSumActivity : Activity() {
             return
         }
 
-        if (!storeTrx(sum, category)) {
+        if (!storeTrx(sum, comment, category)) {
             toast("Внешнее хранилище недоступно")
             return
         }
         finish()
     }
 
-    fun storeTrx(sum: String, category: String): Boolean {
+    fun storeTrx(sum: String, comment: String, category: String): Boolean {
         Log.d("storeTrx", "$sum:$category")
         if (!isExternalStorageWritable()) {
             return false
@@ -73,7 +74,6 @@ class EnterSumActivity : Activity() {
         val now = Date()
         val date = dateFormat.format(now)
         val time = timeFormat.format(now)
-        val comment = ""
         val device = android.os.Build.DEVICE
         val source = "manual"
         BufferedWriter(OutputStreamWriter(FileOutputStream(file, true), "UTF-8")).use {
