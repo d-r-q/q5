@@ -23,25 +23,6 @@ class Q5Widget : AppWidgetProvider() {
 
     companion object {
 
-        val categories = arrayOf(
-                "Продукты",
-                "Машина",
-                "Столовки/Бизнес-Ланчи",
-                "Рестораны/Кафе/Бары",
-                "Психотерапия",
-                "Косметология",
-                "Спорт",
-                "Родственники",
-                "Развлечения",
-                "Медицина",
-                "Хобби Лёши",
-                "Транспорт",
-                "Одежда",
-                "Дом",
-                "Хобби Марины",
-                "Техника"
-        )
-
         val buttonViews = arrayOf(
                 R.id.button11,
                 R.id.button12,
@@ -68,9 +49,10 @@ class Q5Widget : AppWidgetProvider() {
             for (i in 0..15) {
                 Log.d("updateAppWidget", "Updating $i-th button")
                 val configIntent = Intent(context, EnterSumActivity::class.java)
-                val category = categories[i]
+                val category = Categories.categories[i]
                 configIntent.action = category
                 configIntent.putExtra("category", category)
+                configIntent.putExtra("source", "manual")
                 val configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0)
                 views.setOnClickPendingIntent(buttonViews[i], configPendingIntent)
                 views.setTextViewText(buttonViews[i], category)

@@ -3,7 +3,8 @@
     package="ru.jdev.q5">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +21,12 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/q5_widget_info" />
+        </receiver>
+
+        <receiver android:name=".IncomingSms">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
         </receiver>
 
         <activity
