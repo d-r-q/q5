@@ -52,7 +52,7 @@ class Q5Widget : AppWidgetProvider() {
                 val category = Categories.categories[i]
                 configIntent.action = category
                 configIntent.putExtra("category", category)
-                configIntent.putExtra("source", "manual")
+                configIntent.putExtra(EnterSumActivity.sourceExtra, "manual")
                 val configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0)
                 views.setOnClickPendingIntent(buttonViews[i], configPendingIntent)
                 views.setTextViewText(buttonViews[i], category)

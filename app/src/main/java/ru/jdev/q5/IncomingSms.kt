@@ -38,7 +38,7 @@ class IncomingSms : BroadcastReceiver() {
                         configIntent.action = sum
                         configIntent.putExtra("sum", sum)
                         configIntent.putExtra("comment", message)
-                        configIntent.putExtra("source", "sms")
+                        configIntent.putExtra(EnterSumActivity.sourceExtra, "sms")
                         val configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0)
                         setContentIntent(configPendingIntent)
                         setAutoCancel(true)

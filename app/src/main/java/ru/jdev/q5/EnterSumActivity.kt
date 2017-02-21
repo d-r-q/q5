@@ -3,7 +3,6 @@ package ru.jdev.q5
 import android.app.Activity
 import android.os.Bundle
 import android.os.Environment
-import android.text.Editable
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -19,7 +18,7 @@ import android.widget.Spinner
 
 class EnterSumActivity : Activity() {
 
-    lateinit var category: String
+    lateinit var source: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +48,11 @@ class EnterSumActivity : Activity() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             this.adapter = adapter
         }
-        category = intent.getStringExtra("category") ?: ""
+        val category = intent.getStringExtra("category") ?: ""
         with(find<Spinner>(R.id.category_input)) {
             this.setSelection(Math.max(Categories.categories.indexOf(category), 0))
         }
+        source = intent.getStringExtra(sourceExtra) ?: "unknown"
     }
 
     private val dateFormat = SimpleDateFormat("yy.MM.dd")
@@ -73,6 +73,10 @@ class EnterSumActivity : Activity() {
         finish()
     }
 
+    companion object {
+        internal val sourceExtra = "source"
+    }
+
     fun storeTrx(sum: String, comment: String, category: String): Boolean {
         Log.d("storeTrx", "$sum:$category")
         if (!isExternalStorageWritable()) {
@@ -89,12 +93,14 @@ class EnterSumActivity : Activity() {
         val date = dateFormat.format(now)
         val time = timeFormat.format(now)
         val device = android.os.Build.DEVICE
-        val source = intent.getStringExtra("source")
         BufferedWriter(OutputStreamWriter(FileOutputStream(file, true), "UTF-8")).use {
             if (file.length() > 0) {
                 it.newLine()
             }
-            it.write("\"$date\",\"$time\",\"$sum\",\"$category\",\"$comment\",\"$device\",\"$source\"")
+            val echoedComment = comment.replace("\"", "\"\"")
+            val line = "\"$date\",\"$time\",\"$sum\",\"$category\",\"$echoedComment\",\"$device\",\"$source\""
+            Log.d("storeTrx", "Line: $line")
+            it.write(line)
             it.flush()
         }
         return true
