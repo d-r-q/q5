@@ -1,38 +1,31 @@
 package ru.jdev.q5
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
-import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
-import java.io.*
-import java.text.SimpleDateFormat
-import java.util.*
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 
 
 class EnterSumActivity : Activity() {
 
     lateinit var source: String
+    var smsCheck: SmsCheck? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        smsCheck = intent.getSerializableExtra("smsCheck") as SmsCheck?
+        Log.d("onCreate", smsCheck?.toString() ?: "null")
+
         setContentView(R.layout.activity_enter_sum)
+
         with(find<EditText>(R.id.sum_input)) {
             setText(intent.getStringExtra("sum") ?: "")
-            setOnEditorActionListener { view, action, event ->
-                if (action == EditorInfo.IME_ACTION_DONE) {
-                    onOk()
-                    true
-                } else {
-                    false
-                }
-            }
         }
         with(find<Button>(R.id.save_sum_button)) {
             setOnClickListener {
@@ -55,18 +48,22 @@ class EnterSumActivity : Activity() {
         source = intent.getStringExtra(sourceExtra) ?: "unknown"
     }
 
-    private val dateFormat = SimpleDateFormat("yy.MM.dd")
-    private val timeFormat = SimpleDateFormat("HH:mm")
-
     fun onOk() {
         val sum = find<EditText>(R.id.sum_input).text.toString()
         val comment = find<EditText>(R.id.comment_input).text.toString()
         val category = find<Spinner>(R.id.category_input).selectedItem.toString()
+        if (smsCheck != null) {
+            with(getSharedPreferences("place2category", Context.MODE_PRIVATE).edit()) {
+                putString(smsCheck!!.place, category)
+                apply()
+            }
+            Log.d("onOk", "place2category item applied")
+        }
         if (sum.isBlank()) {
             toast("Введите сумму")
             return
         }
-        if (!storeTrx(sum, comment, category)) {
+        if (!TransactionLog.storeTrx(this, Transaction(sum, category, comment, source))) {
             toast("Внешнее хранилище недоступно")
             return
         }
@@ -77,41 +74,5 @@ class EnterSumActivity : Activity() {
         internal val sourceExtra = "source"
     }
 
-    fun storeTrx(sum: String, comment: String, category: String): Boolean {
-        Log.d("storeTrx", "$sum:$category")
-        if (!isExternalStorageWritable()) {
-            return false
-        }
-
-        val file = File(getExternalFilesDir(null), "1702-расходы.csv")
-        Log.d("storeTrx", "${file.parentFile.exists()}")
-        if (!file.parentFile.exists()) {
-            Log.d("storeTrx", "Creating Q5 dir")
-            file.parentFile.mkdirs()
-        }
-        val now = Date()
-        val date = dateFormat.format(now)
-        val time = timeFormat.format(now)
-        val device = android.os.Build.DEVICE
-        BufferedWriter(OutputStreamWriter(FileOutputStream(file, true), "UTF-8")).use {
-            if (file.length() > 0) {
-                it.newLine()
-            }
-            val echoedComment = comment.replace("\"", "\"\"")
-            val line = "\"$date\",\"$time\",\"$sum\",\"$category\",\"$echoedComment\",\"$device\",\"$source\""
-            Log.d("storeTrx", "Line: $line")
-            it.write(line)
-            it.flush()
-        }
-        return true
-    }
-
-    fun isExternalStorageWritable(): Boolean {
-        val state = Environment.getExternalStorageState()
-        if (Environment.MEDIA_MOUNTED == state) {
-            return true
-        }
-        return false
-    }
-
 }
+
