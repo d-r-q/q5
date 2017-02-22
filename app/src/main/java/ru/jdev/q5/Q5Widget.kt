@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.*
 import android.util.Log
 import android.widget.RemoteViews
+import android.graphics.RadialGradient
 
 
 /**
@@ -87,6 +88,12 @@ class Q5Widget : AppWidgetProvider() {
             val IMAGE_WIDTH = 160
             val IMAGE_HEIGHT = 160
 
+            val lighterYellow = Color.argb(255, 255, 230, 0)
+            val darkerYellow = Color.argb(255, 229, 180, 0)
+            val bgGradient = RadialGradient(80f, 80f, 70f, lighterYellow,
+                    darkerYellow, android.graphics.Shader.TileMode.CLAMP)
+            val g = LinearGradient(80.0F, 0.0F, 80.0F, 160.0F, lighterYellow, darkerYellow, Shader.TileMode.CLAMP)
+
             val conf = Bitmap.Config.ARGB_8888
             val bmp = Bitmap.createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, conf)
             val canvas = Canvas(bmp)
@@ -94,8 +101,12 @@ class Q5Widget : AppWidgetProvider() {
             val background = Paint()
             background.setARGB(255, 255, 230, 0)
 
+            val strokeGradient = RadialGradient(20f, 20f, 200f, darkerYellow, lighterYellow,
+                    android.graphics.Shader.TileMode.CLAMP)
             val stroke = Paint()
             stroke.setARGB(255, 229, 180, 0)
+            stroke.isDither = true
+            stroke.shader = strokeGradient
 
 
             val foreground = Paint()
@@ -108,11 +119,14 @@ class Q5Widget : AppWidgetProvider() {
 
             canvas.drawOval(RectF(0.0F, 0.0F, IMAGE_WIDTH.toFloat(), IMAGE_HEIGHT.toFloat()), stroke)
             canvas.drawOval(RectF(6.0F, 6.0F, IMAGE_WIDTH.toFloat() - 6.0F, IMAGE_HEIGHT.toFloat() - 6.0F), background)
+            background.isDither = true
+            background.shader = g
+            canvas.drawOval(RectF(12.0F, 12.0F, IMAGE_WIDTH.toFloat() - 12.0F, IMAGE_HEIGHT.toFloat() - 12.0F), background)
 
             val categoryLetter = category[0].toString()
             val letterWidth = foreground.measureText(categoryLetter)
             val letterFM = foreground.fontMetrics
-            canvas.drawText(categoryLetter, (IMAGE_WIDTH - letterWidth) / 2, (IMAGE_HEIGHT - letterFM.top - letterFM.bottom) / 2, foreground)
+            canvas.drawText(categoryLetter, (IMAGE_WIDTH - letterWidth) / 2, (IMAGE_HEIGHT - letterFM.top - letterFM.bottom) / 2 - 5, foreground)
 
             Log.d("getCategoryImage", "success")
             return bmp
