@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.graphics.*
 import android.util.Log
 import android.widget.RemoteViews
 
@@ -41,25 +42,83 @@ class Q5Widget : AppWidgetProvider() {
                 R.id.button43,
                 R.id.button44
         )
+
+        val textViews = arrayOf(
+                R.id.label11,
+                R.id.label12,
+                R.id.label13,
+                R.id.label14,
+                R.id.label21,
+                R.id.label22,
+                R.id.label23,
+                R.id.label24,
+                R.id.label31,
+                R.id.label32,
+                R.id.label33,
+                R.id.label34,
+                R.id.label41,
+                R.id.label42,
+                R.id.label43,
+                R.id.label44
+        )
+
         internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager,
                                      appWidgetId: Int) {
 
             val views = RemoteViews(context.packageName, R.layout.q5_widget)
 
             for (i in 0..15) {
-                Log.d("updateAppWidget", "Updating $i-th button")
-                val configIntent = Intent(context, EnterSumActivity::class.java)
                 val category = Categories.categories[i]
+                views.setImageViewBitmap(buttonViews[i], getCategoryImage(Categories.categories[i]))
+                val configIntent = Intent(context, EnterSumActivity::class.java)
                 configIntent.action = category
                 configIntent.putExtra("category", category)
                 configIntent.putExtra(EnterSumActivity.sourceExtra, "manual")
                 val configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0)
                 views.setOnClickPendingIntent(buttonViews[i], configPendingIntent)
-                views.setTextViewText(buttonViews[i], category)
+                views.setOnClickPendingIntent(textViews[i], configPendingIntent)
+                views.setTextViewText(textViews[i], category)
             }
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
+
+        fun getCategoryImage(category: String): Bitmap? {
+            val IMAGE_WIDTH = 160
+            val IMAGE_HEIGHT = 160
+
+            val conf = Bitmap.Config.ARGB_8888
+            val bmp = Bitmap.createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, conf)
+            val canvas = Canvas(bmp)
+
+            val background = Paint()
+            background.setARGB(255, 255, 230, 0)
+
+            val stroke = Paint()
+            stroke.setARGB(255, 229, 180, 0)
+
+
+            val foreground = Paint()
+            foreground.setARGB(255, 255, 255, 255)
+            foreground.style = Paint.Style.FILL;
+            foreground.color = Color.argb(209, 112, 86, 0);
+            foreground.isSubpixelText = true;
+            foreground.textSize = 90F;
+            foreground.typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
+
+            canvas.drawOval(RectF(0.0F, 0.0F, IMAGE_WIDTH.toFloat(), IMAGE_HEIGHT.toFloat()), stroke)
+            canvas.drawOval(RectF(4.0F, 4.0F, IMAGE_WIDTH.toFloat() - 8.0F, IMAGE_HEIGHT.toFloat() - 8.0F), background)
+
+            val categoryLetter = category[0].toString()
+            val letterWidth = foreground.measureText(categoryLetter)
+            val letterFM = foreground.fontMetrics
+            canvas.drawText(categoryLetter, (IMAGE_WIDTH - letterWidth) / 2, (IMAGE_HEIGHT - letterFM.top - letterFM.bottom) / 2, foreground)
+
+            Log.d("getCategoryImage", "success")
+            return bmp
+        }
     }
+
+
 }
 

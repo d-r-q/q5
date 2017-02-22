@@ -2,108 +2,336 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/dark_bg"
+    android:orientation="vertical"
     android:padding="@dimen/widget_margin">
 
 
     <LinearLayout
-        android:paddingTop="10dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingTop="10dp">
 
-        <Button
-            android:id="@+id/button11"
-            style="@style/Q5Btn"
-             />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button12"
-            android:text="Дом"
-            style="@style/Q5Btn" />
+            <ImageButton
+                android:id="@+id/button11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
 
-        <Button
-            android:id="@+id/button13"
-            style="@style/Q5Btn" />
+            <TextView
+                android:id="@+id/label11"
+                style="@style/Q5Text" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/button14"
-            style="@style/Q5Btn" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label12"
+                style="@style/Q5Text" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label13"
+                style="@style/Q5Text" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label14"
+                style="@style/Q5Text" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:paddingTop="10dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingTop="10dp">
 
-        <Button
-            android:id="@+id/button21"
-            style="@style/Q5Btn" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button22"
-            style="@style/Q5Btn" />
+            <ImageButton
+                android:id="@+id/button21"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
 
-        <Button
-            android:id="@+id/button23"
-            style="@style/Q5Btn" />
+            <TextView
+                android:id="@+id/label21"
+                style="@style/Q5Text" />
 
-        <Button
-            android:id="@+id/button24"
-            style="@style/Q5Btn" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button22"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label22"
+                style="@style/Q5Text" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label23"
+                style="@style/Q5Text" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label24"
+                style="@style/Q5Text" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:paddingTop="10dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingTop="10dp">
 
-        <Button
-            android:id="@+id/button31"
-            style="@style/Q5Btn" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button32"
-            style="@style/Q5Btn" />
+            <ImageButton
+                android:id="@+id/button31"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
 
-        <Button
-            android:id="@+id/button33"
-            style="@style/Q5Btn" />
+            <TextView
+                android:id="@+id/label31"
+                style="@style/Q5Text" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/button34"
-            style="@style/Q5Btn" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button32"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label32"
+                style="@style/Q5Text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label33"
+                style="@style/Q5Text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button34"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label34"
+                style="@style/Q5Text" />
+        </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:paddingTop="10dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingTop="10dp">
 
-        <Button
-            android:id="@+id/button41"
-            style="@style/Q5Btn" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button42"
-            style="@style/Q5Btn" />
+            <ImageButton
+                android:id="@+id/button41"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
 
-        <Button
-            android:id="@+id/button43"
-            style="@style/Q5Btn" />
+            <TextView
+                android:id="@+id/label41"
+                style="@style/Q5Text" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/button44"
-            style="@style/Q5Btn" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button42"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label42"
+                style="@style/Q5Text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button43"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label43"
+                style="@style/Q5Text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/button44"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@null" />
+
+            <TextView
+                android:id="@+id/label44"
+                style="@style/Q5Text" />
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

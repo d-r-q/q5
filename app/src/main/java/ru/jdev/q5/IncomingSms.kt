@@ -46,7 +46,7 @@ class IncomingSms : BroadcastReceiver() {
                     }
                     val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                     with(Notification.Builder(context)) {
-                        setSmallIcon(R.drawable.coin)
+                        setSmallIcon(R.drawable.icon_transparent)
                         setContentTitle("Обнаружена транзакция")
                         val contentText = if (possibleCategory != null) {
                             "$sum, $possibleCategory"
