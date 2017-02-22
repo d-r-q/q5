@@ -100,14 +100,14 @@ class Q5Widget : AppWidgetProvider() {
 
             val foreground = Paint()
             foreground.setARGB(255, 255, 255, 255)
-            foreground.style = Paint.Style.FILL;
-            foreground.color = Color.argb(209, 112, 86, 0);
-            foreground.isSubpixelText = true;
-            foreground.textSize = 90F;
-            foreground.typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
+            foreground.style = Paint.Style.FILL
+            foreground.color = Color.argb(209, 112, 86, 0)
+            foreground.isSubpixelText = true
+            foreground.textSize = 90F
+            foreground.typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
 
             canvas.drawOval(RectF(0.0F, 0.0F, IMAGE_WIDTH.toFloat(), IMAGE_HEIGHT.toFloat()), stroke)
-            canvas.drawOval(RectF(4.0F, 4.0F, IMAGE_WIDTH.toFloat() - 8.0F, IMAGE_HEIGHT.toFloat() - 8.0F), background)
+            canvas.drawOval(RectF(6.0F, 6.0F, IMAGE_WIDTH.toFloat() - 6.0F, IMAGE_HEIGHT.toFloat() - 6.0F), background)
 
             val categoryLetter = category[0].toString()
             val letterWidth = foreground.measureText(categoryLetter)
