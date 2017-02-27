@@ -19,7 +19,10 @@ class FastSaveService : IntentService("FastSaveService") {
     }
 
     override fun onHandleIntent(intent: Intent?) {
+        val log = Log(this)
+        log.print("FastSaveService started")
         if (intent != null) {
+            log.print("intent is not null")
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val nId = intent.getIntExtra("notificationId", -1)
             Log.d("FastSaveService", nId.toString())

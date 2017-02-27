@@ -19,12 +19,15 @@ class IncomingSms : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val bundle = intent.extras
 
+        val log = Log(context)
+        log.print("Incoming sms received")
         try {
 
             if (bundle != null) {
 
-
+                log.print("bundle is not null")
                 val msgs = Telephony.Sms.Intents.getMessagesFromIntent(intent)
+                log.print("msgs.len: ${msgs.size}")
                 for (msg in msgs) {
 
                     val phoneNumber = msg.displayOriginatingAddress
@@ -35,7 +38,9 @@ class IncomingSms : BroadcastReceiver() {
                     Log.i("SmsReceiver", "senderNum: $senderNum; message: $message")
 
                     val smsCheck = parseSms(message) ?: continue
+                    log.print("msg is check")
                     val sum = smsCheck.sum ?: continue
+                    log.print("msg has sum")
                     val possibleCategory: String? = with(context.getSharedPreferences("place2category", Context.MODE_PRIVATE)) {
                         for ((place, category) in all) {
                             if (category is String && place == smsCheck.place) {
@@ -44,7 +49,9 @@ class IncomingSms : BroadcastReceiver() {
                         }
                         null
                     }
+                    log.print("Possible category: $possibleCategory")
                     val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    log.print("Notification manager: $mNotificationManager")
                     with(Notification.Builder(context)) {
                         setSmallIcon(R.drawable.icon_transparent)
                         setContentTitle("Обнаружена транзакция")
@@ -74,7 +81,9 @@ class IncomingSms : BroadcastReceiver() {
                         }
                         setAutoCancel(true)
                         val res = build()
+                        log.print("Before notify")
                         mNotificationManager.notify(nId, res)
+                        log.print("After notify")
                     }
 
                 } // end for loop
@@ -82,6 +91,7 @@ class IncomingSms : BroadcastReceiver() {
 
         } catch (e: Exception) {
             Log.e("SmsReceiver", "Exception smsReceiver" + e)
+            log.print(e.toString())
         }
 
     }

@@ -90,8 +90,6 @@ class Q5Widget : AppWidgetProvider() {
 
             val lighterYellow = Color.argb(255, 255, 230, 0)
             val darkerYellow = Color.argb(255, 229, 180, 0)
-            val bgGradient = RadialGradient(80f, 80f, 70f, lighterYellow,
-                    darkerYellow, android.graphics.Shader.TileMode.CLAMP)
             val g = LinearGradient(80.0F, 0.0F, 80.0F, 160.0F, lighterYellow, darkerYellow, Shader.TileMode.CLAMP)
 
             val conf = Bitmap.Config.ARGB_8888
