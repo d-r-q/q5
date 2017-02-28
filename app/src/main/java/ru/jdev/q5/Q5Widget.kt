@@ -10,12 +10,7 @@ import android.util.Log
 import android.widget.RemoteViews
 import android.graphics.RadialGradient
 
-
-/**
- * Implementation of App Widget functionality.
- */
 class Q5Widget : AppWidgetProvider() {
-
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         for (appWidgetId in appWidgetIds) {
@@ -66,11 +61,12 @@ class Q5Widget : AppWidgetProvider() {
         internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager,
                                      appWidgetId: Int) {
 
+            val categories = Categories(context)
             val views = RemoteViews(context.packageName, R.layout.q5_widget)
 
             for (i in 0..15) {
-                val category = Categories.categories[i]
-                views.setImageViewBitmap(buttonViews[i], getCategoryImage(Categories.categories[i]))
+                val category = categories.names[i]
+                views.setImageViewBitmap(buttonViews[i], getCategoryImage(categories.names[i]))
                 val configIntent = Intent(context, EnterSumActivity::class.java)
                 configIntent.action = category
                 configIntent.putExtra("category", category)
@@ -130,7 +126,5 @@ class Q5Widget : AppWidgetProvider() {
             return bmp
         }
     }
-
-
 }
 

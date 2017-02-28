@@ -1,6 +1,7 @@
 package ru.jdev.q5
 
 import android.content.Context
+import android.os.Build
 import android.os.Environment
 import android.util.Log
 import java.io.BufferedWriter
@@ -12,7 +13,7 @@ import java.util.*
 
 object TransactionLog {
 
-    private val trxFileNameFormat = SimpleDateFormat("yyMM'-расходы.csv'")
+    private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}.csv'")
 
     fun storeTrx(context: Context, trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {

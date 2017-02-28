@@ -20,6 +20,7 @@ class IncomingSms : BroadcastReceiver() {
         val bundle = intent.extras
 
         val log = Log(context)
+        val categories = Categories(context)
         log.print("Incoming sms received")
         try {
 
@@ -37,18 +38,12 @@ class IncomingSms : BroadcastReceiver() {
 
                     Log.i("SmsReceiver", "senderNum: $senderNum; message: $message")
 
+                    log.print("msg: $message")
                     val smsCheck = parseSms(message) ?: continue
                     log.print("msg is check")
                     val sum = smsCheck.sum ?: continue
                     log.print("msg has sum")
-                    val possibleCategory: String? = with(context.getSharedPreferences("place2category", Context.MODE_PRIVATE)) {
-                        for ((place, category) in all) {
-                            if (category is String && place == smsCheck.place) {
-                                return@with category
-                            }
-                        }
-                        null
-                    }
+                    val possibleCategory = categories.detectCategory(smsCheck)
                     log.print("Possible category: $possibleCategory")
                     val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                     log.print("Notification manager: $mNotificationManager")
