@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
+import java.util.*
 
 
 class EnterSumActivity : Activity() {
@@ -48,12 +49,21 @@ class EnterSumActivity : Activity() {
                 }
             }
         }
+        val trxDate = TrxDate(Date())
+        with(find<EditText>(R.id.date_input)) {
+            setText(trxDate.date())
+        }
+        with(find<EditText>(R.id.time_input)) {
+            setText(trxDate.time())
+        }
     }
 
     fun onOk(): Boolean {
         val sum = find<EditText>(R.id.sum_input).text.toString()
         val comment = find<EditText>(R.id.comment_input).text.toString()
         val category = find<Spinner>(R.id.category_input).selectedItem.toString()
+        val date = find<EditText>(R.id.date_input).text.toString()
+        val time = find<EditText>(R.id.time_input).text.toString()
         if (smsCheck != null) {
             categories.categoryAssigned(smsCheck!!, category)
         }
@@ -61,7 +71,15 @@ class EnterSumActivity : Activity() {
             toast("Введите сумму")
             return false
         }
-        if (!TransactionLog.storeTrx(this, Transaction(sum, category, comment, source))) {
+        if (!TrxDate.isValidDate(date)) {
+            toast("Неверный формат даты (гг.мм.дд)")
+            return false
+        }
+        if (!TrxDate.isValidTime(time)) {
+            toast("Неверный формат времени (чч:мм)")
+            return false
+        }
+        if (!TransactionLog.storeTrx(this, Transaction(sum, category, comment, source, TrxDate(date, time)))) {
             toast("Внешнее хранилище недоступно")
             return false
         }
