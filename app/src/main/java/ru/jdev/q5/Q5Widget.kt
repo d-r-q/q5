@@ -68,6 +68,7 @@ class Q5Widget : AppWidgetProvider() {
                 val category = categories.names[i]
                 views.setImageViewBitmap(buttonViews[i], getCategoryImage(categories.names[i]))
                 val configIntent = Intent(context, EnterSumActivity::class.java)
+                configIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 configIntent.action = category
                 configIntent.putExtra("category", category)
                 configIntent.putExtra(EnterSumActivity.sourceExtra, "manual")
