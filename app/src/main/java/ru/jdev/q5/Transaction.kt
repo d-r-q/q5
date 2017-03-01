@@ -17,7 +17,7 @@ data class Transaction(val date: TrxDate, val sum: String, val category: String,
 }
 
 @SuppressLint("SimpleDateFormat")
-class TrxDate(private val date: Date) : Serializable {
+class TrxDate(val dateTime: Date) : Serializable {
 
     companion object {
         private val dateFormat = SimpleDateFormat("yy.MM.dd")
@@ -30,8 +30,8 @@ class TrxDate(private val date: Date) : Serializable {
 
     constructor(date: String, time: String) : this(dateTimeFormat.parse("$date $time"))
 
-    fun date(): String = dateFormat.format(date)
-    fun time(): String = timeFormat.format(date)
+    fun date(): String = dateFormat.format(dateTime)
+    fun time(): String = timeFormat.format(dateTime)
 }
 
 fun SimpleDateFormat.matches(str: String) = try {

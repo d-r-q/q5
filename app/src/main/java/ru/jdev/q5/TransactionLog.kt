@@ -4,23 +4,20 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.util.Log
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStreamWriter
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-object TransactionLog {
+class TransactionLog(private val context: Context) {
 
     private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}.csv'")
 
-    fun storeTrx(context: Context, trx: Transaction): Boolean {
+    fun storeTrx(trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {
             return false
         }
 
-        val file = File(context.getExternalFilesDir(null), trxFileNameFormat.format(Date()))
+        val file = file()
         Log.d("storeTrx", "${file.parentFile.exists()}")
         if (!file.parentFile.exists()) {
             Log.d("storeTrx", "Creating Q5 dir")
@@ -37,6 +34,18 @@ object TransactionLog {
         return true
     }
 
+    fun list(): Sequence<Transaction> {
+        val file = file()
+        if (!file.exists()) {
+            return emptySequence()
+        }
+        return BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
+                .map { it.split("\",\"").map { it.trim('\"') } }
+                .map {
+                    Transaction(TrxDate(it[0], it[1]), it[2], it[3], "TODO", "TODO", "TODO")
+                }
+    }
+
     fun isExternalStorageWritable(): Boolean {
         val state = Environment.getExternalStorageState()
         if (Environment.MEDIA_MOUNTED == state) {
@@ -45,4 +54,5 @@ object TransactionLog {
         return false
     }
 
+    fun file() = File(context.getExternalFilesDir(null), trxFileNameFormat.format(Date()))
 }

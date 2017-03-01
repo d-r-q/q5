@@ -40,7 +40,7 @@ class IncomingSms : BroadcastReceiver() {
 
                     log.print("msg: $message")
                     val smsCheck = parseSms(message) ?: continue
-                    log.print("msg is check")
+                    log.print("msg is check: $smsCheck")
                     val sum = smsCheck.sum ?: continue
                     log.print("msg has sum")
                     val possibleCategory = categories.detectCategory(smsCheck)
@@ -76,7 +76,7 @@ class IncomingSms : BroadcastReceiver() {
                         }
                         setAutoCancel(true)
                         val res = build()
-                        log.print("Before notify")
+                        log.print("Before notify $nId $res")
                         mNotificationManager.notify(nId, res)
                         log.print("After notify")
                     }

@@ -14,6 +14,7 @@ import java.util.*
 
 class EnterSumActivity : Activity() {
 
+    private val trxLog = TransactionLog(this)
     private val categories = Categories(this)
     lateinit var source: String
     var smsCheck: SmsCheck? = null
@@ -79,7 +80,7 @@ class EnterSumActivity : Activity() {
             toast("Неверный формат времени (чч:мм)")
             return false
         }
-        if (!TransactionLog.storeTrx(this, Transaction(sum, category, comment, source, TrxDate(date, time)))) {
+        if (!trxLog.storeTrx(Transaction(sum, category, comment, source, TrxDate(date, time)))) {
             toast("Внешнее хранилище недоступно")
             return false
         }
