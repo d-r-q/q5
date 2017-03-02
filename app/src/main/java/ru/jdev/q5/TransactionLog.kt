@@ -10,7 +10,7 @@ import java.util.*
 
 class TransactionLog(private val context: Context) {
 
-    private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}.csv'")
+    private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
 
     fun storeTrx(trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {
@@ -40,10 +40,7 @@ class TransactionLog(private val context: Context) {
             return emptySequence()
         }
         return BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
-                .map { it.split("\",\"").map { it.trim('\"') } }
-                .map {
-                    Transaction(TrxDate(it[0], it[1]), it[2], it[3], "TODO", "TODO", "TODO")
-                }
+                .map { Transaction.parse(it) }
     }
 
     fun isExternalStorageWritable(): Boolean {

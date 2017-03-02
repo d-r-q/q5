@@ -2,6 +2,7 @@ package ru.jdev.q5
 
 import android.annotation.SuppressLint
 import android.os.Build
+import ru.jdev.q5.R.string.*
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -9,9 +10,22 @@ import java.util.*
 
 data class Transaction(val date: TrxDate, val sum: String, val category: String, val comment: String, val device: String, val source: String) : Serializable {
 
+    companion object {
+        private val delimiter = ';'
+        fun parse(line: String): Transaction {
+
+            val fields = line.split("\"$delimiter\"").map { it.trim('\"') }
+            val date = if (fields.size > 0) fields[0] else "00.00.00"
+            val time = if (fields.size > 1) fields[1] else "00:00"
+            val sum = if (fields.size > 2) fields[2] else "not parsed"
+            val cat = if (fields.size > 3) fields[3] else "not parsed"
+            return Transaction(TrxDate(date, time), sum, cat, "TODO", "TODO", "TODO")
+        }
+    }
+
     constructor(sum: String, category: String, comment: String, source: String, datetime: TrxDate = TrxDate(Date())) : this(datetime, sum, category, comment, Build.DEVICE, source)
 
-    fun toCsvLine() = "\"${date.date()}\",\"${date.time()}\",\"${sum.replace(',', '.')}\",\"$category\",\"${echoiedComment()}\",\"$device\",\"$source\""
+    fun toCsvLine() = "\"${date.date()}\"$delimiter\"${date.time()}\"$delimiter\"${sum.replace('.', ',')}\"$delimiter\"$category\"$delimiter\"${echoiedComment()}\"$delimiter\"$device\"$delimiter\"$source\""
 
     private fun echoiedComment() = comment.replace("\"", "\"\"")
 }
@@ -20,9 +34,11 @@ data class Transaction(val date: TrxDate, val sum: String, val category: String,
 class TrxDate(val dateTime: Date) : Serializable {
 
     companion object {
-        private val dateFormat = SimpleDateFormat("yy.MM.dd")
-        private val timeFormat = SimpleDateFormat("HH:mm")
-        private val dateTimeFormat = SimpleDateFormat("yy.MM.dd HH:mm")
+        val datePattern = "dd.MM.yyyy"
+        val timePattern = "HH:mm"
+        private val dateFormat = SimpleDateFormat(datePattern)
+        private val timeFormat = SimpleDateFormat(timePattern)
+        private val dateTimeFormat = SimpleDateFormat("$datePattern $timePattern")
 
         fun isValidDate(date: String) = dateFormat.matches(date)
         fun isValidTime(time: String) = timeFormat.matches(time)
