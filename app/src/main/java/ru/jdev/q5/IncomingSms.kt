@@ -12,10 +12,6 @@ import java.io.Serializable
 
 class IncomingSms : BroadcastReceiver() {
 
-    companion object {
-        var id = 0
-    }
-
     override fun onReceive(context: Context, intent: Intent) {
         val bundle = intent.extras
 
@@ -55,7 +51,7 @@ class IncomingSms : BroadcastReceiver() {
                         } else {
                             "Сумма: $sum"
                         }
-                        val nId = id++
+                        val nId = msg.indexOnIcc.let { if (it > -1) it else msg.timestampMillis.div(1000).toInt() }
                         setContentText(contentText)
                         val configIntent = Intent(context, EnterSumActivity::class.java)
                         configIntent.action = message
