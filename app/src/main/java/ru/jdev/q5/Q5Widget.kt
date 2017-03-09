@@ -7,8 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.*
 import android.util.Log
+import android.view.WindowManager
 import android.widget.RemoteViews
-import android.graphics.RadialGradient
+
 
 class Q5Widget : AppWidgetProvider() {
 
@@ -66,7 +67,10 @@ class Q5Widget : AppWidgetProvider() {
 
             for (i in 0..15) {
                 val category = categories.names[i]
-                views.setImageViewBitmap(buttonViews[i], getCategoryImage(categories.names[i]))
+                val d = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+                val displaySize = Point()
+                d.getSize(displaySize)
+                views.setImageViewBitmap(buttonViews[i], getCategoryImage(categories.names[i], displaySize.x))
                 val configIntent = Intent(context, EnterSumActivity::class.java)
                 configIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 configIntent.action = category
@@ -81,9 +85,9 @@ class Q5Widget : AppWidgetProvider() {
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
 
-        fun getCategoryImage(category: String): Bitmap? {
-            val IMAGE_WIDTH = 160
-            val IMAGE_HEIGHT = 160
+        fun getCategoryImage(category: String, displayWidth: Int): Bitmap? {
+            val IMAGE_WIDTH = displayWidth / 6
+            val IMAGE_HEIGHT = displayWidth / 6
 
             val lighterYellow = Color.argb(255, 255, 230, 0)
             val darkerYellow = Color.argb(255, 229, 180, 0)
@@ -109,7 +113,7 @@ class Q5Widget : AppWidgetProvider() {
             foreground.style = Paint.Style.FILL
             foreground.color = Color.argb(209, 112, 86, 0)
             foreground.isSubpixelText = true
-            foreground.textSize = 90F
+            foreground.textSize = (IMAGE_WIDTH / 2).toFloat()
             foreground.typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
 
             canvas.drawOval(RectF(0.0F, 0.0F, IMAGE_WIDTH.toFloat(), IMAGE_HEIGHT.toFloat()), stroke)
