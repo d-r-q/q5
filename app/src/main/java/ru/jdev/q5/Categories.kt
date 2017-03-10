@@ -29,7 +29,8 @@ class Categories(private val context: Context) {
             "Комиссии",
             "Обучение/развитие",
             "Лёшины хотелки",
-            "Маринины хотелки"
+            "Маринины хотелки",
+            "Прочее"
     )
 
     fun categoryAssigned(smsCheck: SmsCheck, category: String) {
