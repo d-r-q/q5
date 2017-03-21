@@ -14,7 +14,7 @@ import android.widget.TableRow
 import android.widget.TextView
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
-import ru.jdev.q5.R.string.sum
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
 
@@ -70,7 +70,8 @@ class LogActivity : AppCompatActivity() {
             table.addView(row)
         }
 
-        val row = createRow("", trxes.sumByDouble { it.sum.replace(',', '.').toDouble() }.toString().replace('.', ','), "Итого")
+        val fmt = NumberFormat.getCurrencyInstance()
+        val row = createRow("", fmt.format(trxes.sumByDouble { it.sum.replace(',', '.').toDouble() }), "Итого")
         table.addView(row)
     }
 
