@@ -11,6 +11,7 @@ import java.util.*
 class TransactionLog(private val context: Context) {
 
     private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
+    private val UTF_8_BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
 
     fun storeTrx(trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {
@@ -23,7 +24,9 @@ class TransactionLog(private val context: Context) {
             Log.d("storeTrx", "Creating Q5 dir")
             file.parentFile.mkdirs()
         }
-        BufferedWriter(OutputStreamWriter(FileOutputStream(file, true), "UTF-8")).use {
+        val fileOutputStream = FileOutputStream(file, true)
+        fileOutputStream.write(UTF_8_BOM)
+        BufferedWriter(OutputStreamWriter(fileOutputStream, "UTF-8")).use {
             if (file.length() > 0) {
                 it.newLine()
             }
@@ -51,5 +54,17 @@ class TransactionLog(private val context: Context) {
         return false
     }
 
-    fun file() = File(context.getExternalFilesDir(null), trxFileNameFormat.format(Date()))
+    fun sharableView(): ByteArray {
+        val file = file()
+        if (!file.exists()) {
+            return UTF_8_BOM
+        }
+        val out = ByteArrayOutputStream()
+        out.write(UTF_8_BOM)
+        BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
+                .forEach { out.write(it.toByteArray()) }
+        return out.toByteArray()
+    }
+
+    private fun file() = File(context.getExternalFilesDir(null), trxFileNameFormat.format(Date()))
 }

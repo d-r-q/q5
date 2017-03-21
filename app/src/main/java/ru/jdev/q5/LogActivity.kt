@@ -6,6 +6,8 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.FrameLayout
 import android.widget.TableLayout
 import android.widget.TableRow
@@ -41,6 +43,21 @@ class LogActivity : AppCompatActivity() {
             configIntent.putExtra(EnterSumActivity.sourceExtra, "manual")
             startActivity(configIntent)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_activity_log, menu);
+        return true;
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val sendIntent = Intent()
+        sendIntent.action = Intent.ACTION_SEND
+        sendIntent.putExtra(Intent.EXTRA_TEXT, String(log.sharableView()))
+        sendIntent.type = "text/csv"
+        startActivity(Intent.createChooser(sendIntent, "Отправить журнал"))
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun updateTable() {
