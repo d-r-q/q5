@@ -13,9 +13,15 @@
     tools:context="ru.jdev.q5.LogActivity"
     tools:showIn="@layout/activity_log">
 
+    <Spinner
+        android:id="@+id/log_part"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/log_part"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true">
 

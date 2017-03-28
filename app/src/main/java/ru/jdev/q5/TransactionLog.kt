@@ -8,10 +8,11 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+private val UTF_8_BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
+
 class TransactionLog(private val context: Context) {
 
     private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
-    private val UTF_8_BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
 
     fun storeTrx(trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {
@@ -24,9 +25,7 @@ class TransactionLog(private val context: Context) {
             Log.d("storeTrx", "Creating Q5 dir")
             file.parentFile.mkdirs()
         }
-        val fileOutputStream = FileOutputStream(file, true)
-        fileOutputStream.write(UTF_8_BOM)
-        BufferedWriter(OutputStreamWriter(fileOutputStream, "UTF-8")).use {
+        BufferedWriter(OutputStreamWriter(FileOutputStream(file, true), "UTF-8")).use {
             if (file.length() > 0) {
                 it.newLine()
             }
@@ -37,13 +36,13 @@ class TransactionLog(private val context: Context) {
         return true
     }
 
-    fun list(): Sequence<Transaction> {
-        val file = file()
-        if (!file.exists()) {
-            return emptySequence()
+    fun parts(): List<LogPart> {
+        if (!(context.getExternalFilesDir(null)?.exists() ?: false)) {
+            return listOf()
         }
-        return BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
-                .map { Transaction.parse(it) }
+        return context.getExternalFilesDir(null)
+                .listFiles({ file -> file.name.endsWith(".csv") })
+                .map(::LogPart)
     }
 
     fun isExternalStorageWritable(): Boolean {
@@ -54,8 +53,27 @@ class TransactionLog(private val context: Context) {
         return false
     }
 
+    private fun file() = File(context.getExternalFilesDir(null), trxFileNameFormat.format(Date()))
+}
+
+class LogPart(private val content: File) {
+
+    val name: String = content.name
+
+
+    fun list(): Sequence<Transaction> {
+        val file = content
+        if (!file.exists()) {
+            return emptySequence()
+        }
+        return BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
+                .map(String::trim)
+                .filter { !it.isEmpty() }
+                .map { Transaction.parse(it) }
+    }
+
     fun sharableView(): ByteArray {
-        val file = file()
+        val file = content
         if (!file.exists()) {
             return UTF_8_BOM
         }
@@ -66,5 +84,6 @@ class TransactionLog(private val context: Context) {
         return out.toByteArray()
     }
 
-    private fun file() = File(context.getExternalFilesDir(null), trxFileNameFormat.format(Date()))
+    override fun toString(): String = name
+
 }

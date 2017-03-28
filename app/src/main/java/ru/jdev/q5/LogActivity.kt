@@ -8,12 +8,11 @@ import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.FrameLayout
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
+import android.widget.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
+import org.jetbrains.anko.onItemSelectedListener
+import org.jetbrains.anko.toast
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
@@ -43,6 +42,13 @@ class LogActivity : AppCompatActivity() {
             configIntent.putExtra(EnterSumActivity.sourceExtra, "manual")
             startActivity(configIntent)
         }
+        with(find<Spinner>(R.id.log_part)) {
+            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, log.parts().sortedByDescending { it.name })
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            this.adapter = adapter
+            this.setSelection(0)
+            this.onItemSelectedListener { onItemSelected { adapterView, view, i, l -> updateTable() } }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -51,9 +57,14 @@ class LogActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val part = find<Spinner>(R.id.log_part).selectedItem as LogPart?
+        if (part == null) {
+            toast("Не выбран журнал")
+            return false
+        }
         val sendIntent = Intent()
         sendIntent.action = Intent.ACTION_SEND
-        sendIntent.putExtra(Intent.EXTRA_TEXT, String(log.sharableView()))
+        sendIntent.putExtra(Intent.EXTRA_TEXT, String(part.sharableView()))
         sendIntent.type = "text/csv"
         startActivity(Intent.createChooser(sendIntent, "Отправить журнал"))
 
@@ -64,7 +75,8 @@ class LogActivity : AppCompatActivity() {
         val table = find<TableLayout>(R.id.table)
 
         table.removeAllViews()
-        val trxes = log.list().toList().reversed()
+        val part = find<Spinner>(R.id.log_part).selectedItem as LogPart?
+        val trxes = (part?.list()?.toList() ?: listOf()).reversed()
         trxes.forEach {
             val row = createRow(dateFormat.format(it.date.dateTime), it.sum, it.category)
             table.addView(row)
