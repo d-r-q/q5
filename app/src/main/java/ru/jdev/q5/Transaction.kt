@@ -19,7 +19,11 @@ data class Transaction(val date: TrxDate, val sum: String, val category: String,
             val time = if (fields.size > 1) fields[1] else "00:00"
             val sum = if (fields.size > 2) fields[2] else "not parsed"
             val cat = if (fields.size > 3) fields[3] else "not parsed"
-            return Transaction(TrxDate(date, time), sum, cat, "TODO", "TODO", "TODO")
+            return try {
+                Transaction(TrxDate(date, time), sum, cat, "TODO", "TODO", "TODO")
+            } catch (e: ParseException) {
+                Transaction(TrxDate("00.00.00", "00:00"), "0", "Not Parsed", "Not Parsed", "Not parsed", "NotParsed")
+            }
         }
     }
 

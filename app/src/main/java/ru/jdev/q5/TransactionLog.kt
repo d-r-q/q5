@@ -74,13 +74,17 @@ class LogPart(private val content: File) {
 
     fun sharableView(): ByteArray {
         val file = content
+        Log.d("LogPart", "Sharing file: ${file.name}")
         if (!file.exists()) {
             return UTF_8_BOM
         }
         val out = ByteArrayOutputStream()
+        val writer = BufferedWriter(OutputStreamWriter(out, "UTF-8"))
         out.write(UTF_8_BOM)
         BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
-                .forEach { out.write(it.toByteArray()) }
+                .forEach { writer.write(it); writer.newLine()  }
+        writer.flush()
+        Log.d("LogPart", "Out: ${String(out.toByteArray())}")
         return out.toByteArray()
     }
 
