@@ -60,7 +60,6 @@ class LogPart(private val content: File) {
 
     val name: String = content.name
 
-
     fun list(): Sequence<Transaction> {
         val file = content
         if (!file.exists()) {

@@ -1,10 +1,12 @@
 package ru.jdev.q5
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.system.Os.write
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -13,6 +15,9 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.onItemSelectedListener
 import org.jetbrains.anko.toast
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileWriter
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
@@ -62,10 +67,18 @@ class LogActivity : AppCompatActivity() {
             toast("Не выбран журнал")
             return false
         }
-        val sendIntent = Intent()
-        sendIntent.action = Intent.ACTION_SEND
-        sendIntent.putExtra(Intent.EXTRA_TEXT, String(part.sharableView()))
+
+        val outputDir = this.externalCacheDir
+        val outputFile = File.createTempFile(part.name, ".csv", outputDir)
+        FileOutputStream(outputFile).use {
+            it.write(part.sharableView())
+            it.flush()
+        }
+
+        val path = Uri.fromFile(outputFile)
+        val sendIntent = Intent(Intent.ACTION_SEND)
         sendIntent.type = "text/csv"
+        sendIntent.putExtra(Intent.EXTRA_STREAM, path)
         startActivity(Intent.createChooser(sendIntent, "Отправить журнал"))
 
         return super.onOptionsItemSelected(item)
