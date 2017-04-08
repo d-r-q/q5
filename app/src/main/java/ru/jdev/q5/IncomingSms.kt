@@ -59,6 +59,9 @@ class IncomingSms : BroadcastReceiver() {
                         configIntent.putExtra("comment", message)
                         configIntent.putExtra("smsCheck", smsCheck)
                         configIntent.putExtra(EnterSumActivity.sourceExtra, "sms")
+                        if (possibleCategory != null) {
+                            configIntent.putExtra("category", possibleCategory)
+                        }
                         val configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0)
                         setContentIntent(configPendingIntent)
 
