@@ -91,8 +91,17 @@ class IncomingSms : BroadcastReceiver() {
     }
 
     fun parseSms(text: String): SmsCheck? {
+        val parsers = listOf(
+                this::parseAlfaBankSms,
+                this::parseKukuruzaSms)
+        return parsers.asSequence()
+                .map { it(text) }
+                .find { it != null }
+    }
+
+    private fun parseAlfaBankSms(text: String): AlfaBankSmsCheck? {
         val parts = text.split(";").map(String::trim)
-        Log.d("parseSms", parts.toString())
+        Log.d("parseAlfaBankSms", parts.toString())
         if (parts.size != 7 || parts[1] != "Pokupka") {
             return null
         }
@@ -100,8 +109,25 @@ class IncomingSms : BroadcastReceiver() {
         val match = """.*Summa: (\d+,\d+) RUR.*""".toRegex().matchEntire(parts[3])
         Log.d("parseSms", match?.toString() ?: "not matched")
         val sum = match?.groups?.get(1)?.value
-        return SmsCheck(parts[0], parts[1], parts[2], sum, parts[4], parts[5], parts[6])
+        return AlfaBankSmsCheck(sum, parts[5])
+    }
+
+    private fun parseKukuruzaSms(text: String): KukuruzaSmsCheck? {
+        // *7367; Pokupka: 189.00RUR; Ostatok: 1524.01RUR; UBER RU FEB21 EVNWM HE, help.uber.com; 20.02.2017 15:37; Tel 88007007710
+        val parts = text.split(";").map(String::trim)
+        Log.d("parseKukuruzaSms", parts.toString())
+        if (parts.size != 6 || !parts[1].startsWith("Pokupka")) {
+            return null
+        }
+        val match = """Pokupka: (\d+\.\d+)RUR.*""".toRegex().matchEntire(parts[1])
+        Log.d("parseSms", match?.toString() ?: "not matched")
+        val sum = match?.groups?.get(1)?.value
+        return KukuruzaSmsCheck(sum, parts[3])
     }
 }
 
-data class SmsCheck(val account: String?, val action: String?, val result: String?, val sum: String?, val rem: String?, val place: String?, val dateTime: String?) : Serializable
+abstract class SmsCheck(val sum: String?, val place: String?) : Serializable
+
+class AlfaBankSmsCheck(sum: String?, place: String?) : SmsCheck(sum, place)
+
+class KukuruzaSmsCheck(sum: String?, place: String?) : SmsCheck(sum, place)
