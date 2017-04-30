@@ -18,15 +18,17 @@ import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
+import java.math.BigDecimal
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 class LogActivity : AppCompatActivity() {
 
     private val dateFormat = SimpleDateFormat("dd/MMM")
-    val log = TransactionLog(this)
-    val tableParams = FrameLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
+    private val log = TransactionLog(this)
+    private val tableParams = FrameLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +64,15 @@ class LogActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.share) {
+            return share()
+        } else if (item?.itemId == R.id.sort) {
+            return sort()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun share(): Boolean {
         val part = find<Spinner>(R.id.log_part).selectedItem as LogPart?
         if (part == null) {
             toast("Не выбран журнал")
@@ -81,15 +92,31 @@ class LogActivity : AppCompatActivity() {
         sendIntent.putExtra(Intent.EXTRA_STREAM, path)
         startActivity(Intent.createChooser(sendIntent, "Отправить журнал"))
 
-        return super.onOptionsItemSelected(item)
+        return true
     }
+
+    private fun sort(): Boolean {
+        if (trxComparator == trxDateComparator) {
+            trxComparator = trxSumComparator
+        } else {
+            trxComparator = trxDateComparator
+        }
+        updateTable()
+        return true
+    }
+
+    private val trxDateComparator = Comparator<Transaction> { (date1), (date2) -> date1.dateTime.compareTo(date2.dateTime) }
+    private val trxSumComparator = Comparator<Transaction> { (_, sum1), (_, sum2) -> BigDecimal(sum1.replace(',', '.')).compareTo(BigDecimal(sum2.replace(',', '.'))) }
+    private var trxComparator = trxDateComparator
 
     private fun updateTable() {
         val table = find<TableLayout>(R.id.table)
 
         table.removeAllViews()
         val part = find<Spinner>(R.id.log_part).selectedItem as LogPart?
-        val trxes = (part?.list()?.toList() ?: listOf()).reversed()
+        // сейчас что сортировка по дате, что по сумме интересует по убыванию, так что компараторы сортируют по возрастанию,
+        // а "оборачиваем" здесь
+        val trxes = (part?.list()?.toList() ?: listOf()).sortedWith(trxComparator).asReversed()
         trxes.forEach {
             val row = createRow(dateFormat.format(it.date.dateTime), it.sum, it.category)
             table.addView(row)
