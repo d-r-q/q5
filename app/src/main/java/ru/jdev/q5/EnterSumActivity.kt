@@ -9,13 +9,14 @@ import android.widget.EditText
 import android.widget.Spinner
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
+import ru.jdev.q5.categories.Categories
 import java.util.*
 
 
 class EnterSumActivity : Activity() {
 
-    private val trxLog = TransactionLog(this)
-    private val categories = Categories(this)
+    private val trxLog = CsvTransactionLog(this)
+    //private val categories = Categories(this)
     lateinit var source: String
     var smsCheck: SmsCheck? = null
 
@@ -35,10 +36,10 @@ class EnterSumActivity : Activity() {
             setText(sum)
         }
         with(find<Spinner>(R.id.category_input)) {
-            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, categories.names)
+            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, arrayOf(""))
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             this.adapter = adapter
-            this.setSelection(Math.max(categories.names.indexOf(category), 0))
+            this.setSelection(Math.max(arrayOf("").indexOf(category), 0))
         }
         with(find<EditText>(R.id.comment_input)) {
             setText(comment)
@@ -66,7 +67,7 @@ class EnterSumActivity : Activity() {
         val date = find<EditText>(R.id.date_input).text.toString()
         val time = find<EditText>(R.id.time_input).text.toString()
         if (smsCheck != null) {
-            categories.categoryAssigned(smsCheck!!, category)
+            //categories.categoryAssigned(smsCheck!!, category)
         }
         if (sum.isBlank()) {
             toast("Введите сумму")

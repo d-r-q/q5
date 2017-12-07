@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.system.Os.write
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -17,7 +16,6 @@ import org.jetbrains.anko.onItemSelectedListener
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileOutputStream
-import java.io.FileWriter
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -27,7 +25,7 @@ import java.util.*
 class LogActivity : AppCompatActivity() {
 
     private val dateFormat = SimpleDateFormat("dd/MMM")
-    private val log = TransactionLog(this)
+    private val log = CsvTransactionLog(this)
     private val tableParams = FrameLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
 
     override fun onCreate(savedInstanceState: Bundle?) {

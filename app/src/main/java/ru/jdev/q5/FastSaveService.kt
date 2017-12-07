@@ -11,7 +11,7 @@ import org.jetbrains.anko.toast
 
 class FastSaveService : IntentService("FastSaveService") {
 
-    private val trxLog = TransactionLog(this)
+    private val trxLog = CsvTransactionLog(this)
     private lateinit var mHandler: Handler
 
     override fun onCreate() {

@@ -56,7 +56,7 @@ data class Transaction(val date: TrxDate, val sum: String, val category: String,
 class TrxDate(val dateTime: Date) : Serializable {
 
     companion object {
-        val datePatternV1 = "yy.MM.dd"
+        val datePatternV1 = "yy.Mm.dd"
 
         val datePattern = "dd.MM.yyyy"
         val timePattern = "HH:mm"

@@ -10,7 +10,7 @@ import java.util.*
 
 private val UTF_8_BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
 
-class TransactionLog(private val context: Context) {
+class CsvTransactionLog(private val context: Context) {
 
     private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
 
@@ -51,6 +51,14 @@ class TransactionLog(private val context: Context) {
             return true
         }
         return false
+    }
+
+    fun delete(): Boolean {
+        var deleted = true
+        for (f in context.getExternalFilesDir(null).listFiles()) {
+            deleted = deleted and f.delete()
+        }
+        return deleted
     }
 
     private fun file() = File(context.getExternalFilesDir(null), trxFileNameFormat.format(Date()))

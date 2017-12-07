@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
+import ru.jdev.q5.categories.Categories
 import java.io.Serializable
 
 class IncomingSms : BroadcastReceiver() {
@@ -16,7 +17,7 @@ class IncomingSms : BroadcastReceiver() {
         val bundle = intent.extras
 
         val log = Log(context)
-        val categories = Categories(context)
+        //val categories = Categories(context)
         log.print("Incoming sms received")
         try {
 
@@ -39,7 +40,7 @@ class IncomingSms : BroadcastReceiver() {
                     log.print("msg is check: $smsCheck")
                     val sum = smsCheck.sum ?: continue
                     log.print("msg has sum")
-                    val possibleCategory = categories.detectCategory(smsCheck)
+                    val possibleCategory = "" // categories.detectCategory(smsCheck)
                     log.print("Possible category: $possibleCategory")
                     val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                     log.print("Notification manager: $mNotificationManager")

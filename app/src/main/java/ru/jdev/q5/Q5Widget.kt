@@ -9,6 +9,7 @@ import android.graphics.*
 import android.util.Log
 import android.view.WindowManager
 import android.widget.RemoteViews
+import ru.jdev.q5.categories.Categories
 
 
 class Q5Widget : AppWidgetProvider() {
@@ -62,15 +63,15 @@ class Q5Widget : AppWidgetProvider() {
         internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager,
                                      appWidgetId: Int) {
 
-            val categories = Categories(context)
+            //val categories = Categories(context)
             val views = RemoteViews(context.packageName, R.layout.q5_widget)
 
             for (i in 0..15) {
-                val category = categories.names[i]
+                val category = "" // categories.names[i]
                 val d = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
                 val displaySize = Point()
                 d.getSize(displaySize)
-                views.setImageViewBitmap(buttonViews[i], getCategoryImage(categories.names[i], displaySize.x))
+                views.setImageViewBitmap(buttonViews[i], getCategoryImage("", displaySize.x))
                 val configIntent = Intent(context, EnterSumActivity::class.java)
                 configIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 configIntent.action = category
