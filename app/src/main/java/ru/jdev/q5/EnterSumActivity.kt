@@ -15,12 +15,13 @@ import java.util.*
 class EnterSumActivity : Activity() {
 
     private val trxLog = TransactionLog(this)
-    private val categories = Categories(this)
-    lateinit var source: String
-    var smsCheck: SmsCheck? = null
+    private lateinit var categories: Categories
+    private lateinit var source: String
+    private var smsCheck: SmsCheck? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        categories = Categories(this)
         smsCheck = intent.getSerializableExtra("smsCheck") as SmsCheck?
         source = intent.getStringExtra(sourceExtra) ?: "unknown"
         val category = intent.getStringExtra("category") ?: ""
@@ -35,10 +36,11 @@ class EnterSumActivity : Activity() {
             setText(sum)
         }
         with(find<Spinner>(R.id.category_input)) {
-            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, categories.names)
+            val categoryNames = categories.names()
+            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, categoryNames)
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             this.adapter = adapter
-            this.setSelection(Math.max(categories.names.indexOf(category), 0))
+            this.setSelection(Math.max(categoryNames.indexOf(category), 0))
         }
         with(find<EditText>(R.id.comment_input)) {
             setText(comment)

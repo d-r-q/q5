@@ -1,43 +1,25 @@
 package ru.jdev.q5
 
 import android.content.Context
+import ru.jdev.q5.storage.Item
+import ru.jdev.q5.storage.QCollection
+import java.io.File
+
+class Category(override val id: Int?, val name: String) : Item
 
 class Categories(private val context: Context) {
 
-    val names = arrayOf(
-            "Продукты",
-            "Машина",
-            "Столовки/Бизнес-Ланчи",
-            "Рестораны/Кафе/Бары",
-            "Психотерапия",
-            "Косметология",
-            "Массаж",
-            "Спорт",
-            "Родственники",
-            "Развлечения",
-            "Медицина",
-            "Хобби Лёши",
-            "Транспорт",
-            "Дом",
-            "Хобби Марины",
-            "Подарки",
-            "Алкоголь",
-            "Одежда",
-            "Накопления/Инвестиции",
-            "Отпуск",
-            "Благотворительность",
-            "Техника",
-            "Комиссии",
-            "Обучение/развитие",
-            "Лёшины хотелки",
-            "Маринины хотелки",
-            "Прочее",
-            "Сигареты",
-            "Возврат долгов",
-            "Бизнес/обязательное",
-            "Бизнес/развитие",
-            "Штрафы"
-    )
+    val categories = QCollection<Category>(File(context.getExternalFilesDir(null), "categories.txt"), { c -> Category(c.index, c.value) }, Category::name)
+
+    init {
+        if (categories.list().isEmpty()) {
+            TransactionLog(context).parts().asSequence()
+                    .flatMap { it.list() }
+                    .map { Category(null, it.category) }
+                    .toSet()
+                    .forEach { categories.with(it) }
+        }
+    }
 
     fun categoryAssigned(smsCheck: SmsCheck, category: String) {
         with(context.getSharedPreferences("place2category", Context.MODE_PRIVATE).edit()) {
@@ -55,5 +37,7 @@ class Categories(private val context: Context) {
         }
         null
     }
+
+    fun names(): List<String> = categories.list().map { it.name }
 
 }
