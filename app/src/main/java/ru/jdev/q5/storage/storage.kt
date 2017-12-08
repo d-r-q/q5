@@ -1,5 +1,6 @@
 package ru.jdev.q5.storage
 
+import android.util.Log
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileInputStream
@@ -13,11 +14,13 @@ class QCollection<T : Item>(private val source: File, parse: (IndexedValue<Strin
 
     private val elements: ArrayList<T> =
             if (source.exists()) {
+                Log.d("QCollection", "Load data from ${source.absolutePath}")
                 FileInputStream(source).bufferedReader().lineSequence()
                         .withIndex()
                         .map(parse)
                         .toCollection(ArrayList<T>())
             } else {
+                Log.d("QCollection", "No data file found, create parent dirs at ${source.parentFile.absolutePath}")
                 source.parentFile.mkdirs()
                 ArrayList<T>()
             }

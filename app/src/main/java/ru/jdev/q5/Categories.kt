@@ -1,11 +1,12 @@
 package ru.jdev.q5
 
 import android.content.Context
+import android.util.Log
 import ru.jdev.q5.storage.Item
 import ru.jdev.q5.storage.QCollection
 import java.io.File
 
-class Category(override val id: Int?, val name: String) : Item
+data class Category(override val id: Int?, val name: String) : Item
 
 class Categories(private val context: Context) {
 

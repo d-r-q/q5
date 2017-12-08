@@ -37,6 +37,7 @@ class TransactionLog(private val context: Context) {
     }
 
     fun parts(): List<LogPart> {
+        Log.d("transactionLog", "parts")
         if (!(context.getExternalFilesDir(null)?.exists() ?: false)) {
             return listOf()
         }
