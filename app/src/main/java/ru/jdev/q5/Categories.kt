@@ -16,7 +16,7 @@ class Categories(private val context: Context) {
             TransactionLog(context).parts().asSequence()
                     .flatMap { it.list() }
                     .map { Category(null, it.category) }
-                    .toSet()
+                    .distinct()
                     .forEach { categories.with(it) }
         }
     }
