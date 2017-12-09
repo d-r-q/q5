@@ -44,7 +44,7 @@ data class Transaction(override val id: Int?, val date: TrxDate, val sum: String
         }
     }
 
-    constructor(sum: String, category: String, comment: String, source: String, datetime: TrxDate = TrxDate(Date())) : this(null, datetime, sum, category, comment, Build.DEVICE, source)
+    constructor(id: Int?, sum: String, category: String, comment: String, source: String, datetime: TrxDate = TrxDate(Date())) : this(id, datetime, sum, category, comment, Build.DEVICE, source)
 
     fun toCsvLine() = "\"${date.date()}\"$delimiter\"${date.time()}\"$delimiter\"${sum.replace('.', ',')}\"$delimiter\"$category\"$delimiter\"${echoiedComment()}\"$delimiter\"$device\"$delimiter\"$source\""
             .replace("\n", "")

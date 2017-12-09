@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.system.Os.write
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -17,7 +16,6 @@ import org.jetbrains.anko.onItemSelectedListener
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileOutputStream
-import java.io.FileWriter
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -117,8 +115,19 @@ class LogActivity : AppCompatActivity() {
         // сейчас что сортировка по дате, что по сумме интересует по убыванию, так что компараторы сортируют по возрастанию,
         // а "оборачиваем" здесь
         val trxes = (part?.list()?.toList() ?: listOf()).sortedWith(trxComparator).asReversed()
-        trxes.forEach {
-            val row = createRow(dateFormat.format(it.date.dateTime), it.sum, it.category)
+        trxes.forEach { trx ->
+            val row = createRow(dateFormat.format(trx.date.dateTime), trx.sum, trx.category)
+            row.onClick {
+                val configIntent = Intent(this, EnterSumActivity::class.java)
+                configIntent.putExtra(EnterSumActivity.logPartExtra, part!!.name)
+                configIntent.putExtra(EnterSumActivity.trxIdExtra, trx.id)
+                configIntent.putExtra("sum", trx.sum)
+                configIntent.putExtra("category", trx.category)
+                configIntent.putExtra("comment", trx.comment)
+                configIntent.putExtra("date", trx.date.date())
+                configIntent.putExtra("time", trx.date.time())
+                startActivity(configIntent)
+            }
             table.addView(row)
         }
 
@@ -130,9 +139,12 @@ class LogActivity : AppCompatActivity() {
     private fun createRow(date: String, sum: String, category: String): TableRow {
         val dateLayoutParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT)
         dateLayoutParams.rightMargin = 40
+        dateLayoutParams.topMargin = 40
+        dateLayoutParams.bottomMargin = 40
         dateLayoutParams.weight = 1.0F
 
         val sumLayoutParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT)
+        sumLayoutParams.gravity = Gravity.CENTER_VERTICAL
         sumLayoutParams.rightMargin = 20
         sumLayoutParams.weight = 2.0F
 
@@ -141,7 +153,7 @@ class LogActivity : AppCompatActivity() {
         categoryLayoutParams.weight = 2.0F
 
         val tableRow = TableRow(this)
-        tableRow.layoutParams = tableParams// TableLayout is the parent view
+        tableRow.layoutParams = tableParams// TableLayout is the parent view[
 
         val dateView = TextView(this)
         dateView.gravity = Gravity.CENTER

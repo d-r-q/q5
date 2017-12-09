@@ -22,11 +22,17 @@ class EnterSumActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         categories = Categories(this)
+        val trxDate = TrxDate(Date())
+
+        val logPart = intent.getStringExtra(logPartExtra)
+        val id = intent.getIntExtra(trxIdExtra, -1).takeIf { it != -1 }
         smsCheck = intent.getSerializableExtra("smsCheck") as SmsCheck?
         source = intent.getStringExtra(sourceExtra) ?: "unknown"
         val category = intent.getStringExtra("category") ?: ""
         val sum = intent.getStringExtra("sum") ?: ""
         val comment = intent.getStringExtra("comment") ?: ""
+        val date = intent.getStringExtra("date") ?: trxDate.date()
+        val time = intent.getStringExtra("time") ?: trxDate.time()
 
         Log.d("onCreate", smsCheck?.toString() ?: "null")
 
@@ -45,23 +51,22 @@ class EnterSumActivity : Activity() {
         with(find<EditText>(R.id.comment_input)) {
             setText(comment)
         }
+        with(find<EditText>(R.id.date_input)) {
+            setText(date)
+        }
+        with(find<EditText>(R.id.time_input)) {
+            setText(time)
+        }
         with(find<Button>(R.id.save_sum_button)) {
             setOnClickListener {
-                if (onOk()) {
+                if (onOk(logPart, id)) {
                     finish()
                 }
             }
         }
-        val trxDate = TrxDate(Date())
-        with(find<EditText>(R.id.date_input)) {
-            setText(trxDate.date())
-        }
-        with(find<EditText>(R.id.time_input)) {
-            setText(trxDate.time())
-        }
     }
 
-    fun onOk(): Boolean {
+    fun onOk(logPart: String?, id: Int?): Boolean {
         val sum = find<EditText>(R.id.sum_input).text.toString()
         val comment = find<EditText>(R.id.comment_input).text.toString()
         val category = find<Spinner>(R.id.category_input).selectedItem.toString()
@@ -82,7 +87,7 @@ class EnterSumActivity : Activity() {
             toast("Неверный формат времени (чч:мм)")
             return false
         }
-        if (!trxLog.storeTrx(Transaction(sum, category, comment, source, TrxDate(date, time)))) {
+        if (!trxLog.storeTrx(logPart, Transaction(id, sum, category, comment, source, TrxDate(date, time)))) {
             toast("Внешнее хранилище недоступно")
             return false
         }
@@ -91,6 +96,8 @@ class EnterSumActivity : Activity() {
 
     companion object {
         internal val sourceExtra = "source"
+        internal val logPartExtra = "logPart"
+        internal val trxIdExtra = "trxId"
     }
 
 }

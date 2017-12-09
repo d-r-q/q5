@@ -68,7 +68,7 @@ class IncomingSms : BroadcastReceiver() {
                         if (possibleCategory != null) {
                             val saveIntent = Intent(context, FastSaveService::class.java)
                             saveIntent.action = message
-                            saveIntent.putExtra("trx", Transaction(sum, possibleCategory, message, "sms"))
+                            saveIntent.putExtra("trx", Transaction(null, sum, possibleCategory, message, "sms"))
                             saveIntent.putExtra("notificationId", nId)
                             val savePendingIntent = PendingIntent.getService(context, 0, saveIntent, 0)
                             addAction(Notification.Action.Builder(android.R.drawable.ic_menu_save, "Сохранить", savePendingIntent).build())

@@ -16,12 +16,12 @@ class TransactionLog(private val context: Context) {
 
     private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
 
-    fun storeTrx(trx: Transaction): Boolean {
+    fun storeTrx(logPart: String?, trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {
             return false
         }
 
-        val file = file()
+        val file = File(context.getExternalFilesDir(null), logPart ?: trxFileNameFormat.format(Date()))
         Log.d("storeTrx", "${file.parentFile.exists()}")
         if (!file.parentFile.exists()) {
             Log.d("storeTrx", "Creating Q5 dir")
@@ -30,6 +30,8 @@ class TransactionLog(private val context: Context) {
         LogPart(file).with(trx)
         return true
     }
+
+    fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart))
 
     fun parts(): List<LogPart> {
         Log.d("transactionLog", "parts")
@@ -49,7 +51,6 @@ class TransactionLog(private val context: Context) {
         return false
     }
 
-    private fun file() = File(context.getExternalFilesDir(null), trxFileNameFormat.format(Date()))
 }
 
 class LogPart(private val content: File) {
