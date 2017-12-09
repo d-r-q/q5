@@ -105,8 +105,8 @@ class LogActivity : AppCompatActivity() {
         return true
     }
 
-    private val trxDateComparator = Comparator<Transaction> { (date1), (date2) -> date1.dateTime.compareTo(date2.dateTime) }
-    private val trxSumComparator = Comparator<Transaction> { (_, sum1), (_, sum2) -> BigDecimal(sum1.replace(',', '.')).compareTo(BigDecimal(sum2.replace(',', '.'))) }
+    private val trxDateComparator = Comparator<Transaction> { (_, date1), (_, date2) -> date1.dateTime.compareTo(date2.dateTime) }
+    private val trxSumComparator = Comparator<Transaction> { (_, _, sum1), (_, _, sum2) -> BigDecimal(sum1.replace(',', '.')).compareTo(BigDecimal(sum2.replace(',', '.'))) }
     private var trxComparator = trxDateComparator
 
     private fun updateTable() {

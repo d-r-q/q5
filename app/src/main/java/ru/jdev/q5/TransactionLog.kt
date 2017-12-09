@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import ru.jdev.q5.Transaction.Companion.parse
+import ru.jdev.q5.storage.QCollection
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,14 +27,7 @@ class TransactionLog(private val context: Context) {
             Log.d("storeTrx", "Creating Q5 dir")
             file.parentFile.mkdirs()
         }
-        BufferedWriter(OutputStreamWriter(FileOutputStream(file, true), "UTF-8")).use {
-            if (file.length() > 0) {
-                it.newLine()
-            }
-            Log.d("storeTrx", "Line: ${trx.toCsvLine()}")
-            it.write(trx.toCsvLine())
-            it.flush()
-        }
+        LogPart(file).with(trx)
         return true
     }
 
@@ -60,16 +55,14 @@ class TransactionLog(private val context: Context) {
 class LogPart(private val content: File) {
 
     val name: String = content.name
+    private val transactions = QCollection<Transaction>(content, { line -> parse(line)}, { it -> it.toCsvLine()})
 
-    fun list(): Sequence<Transaction> {
-        val file = content
-        if (!file.exists()) {
-            return emptySequence()
-        }
-        return BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
-                .map(String::trim)
-                .filter { !it.isEmpty() }
-                .map { Transaction.parse(it) }
+    fun list(): List<Transaction> = transactions.list()
+
+    fun with(trx: Transaction): LogPart {
+        transactions.with(trx)
+        transactions.persist()
+        return this
     }
 
     fun sharableView(): ByteArray {

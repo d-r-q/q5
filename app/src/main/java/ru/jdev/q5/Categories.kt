@@ -1,7 +1,6 @@
 package ru.jdev.q5
 
 import android.content.Context
-import android.util.Log
 import ru.jdev.q5.storage.Item
 import ru.jdev.q5.storage.QCollection
 import java.io.File
@@ -14,7 +13,7 @@ class Categories(private val context: Context) {
 
     init {
         if (categories.list().isEmpty()) {
-            TransactionLog(context).parts().asSequence()
+            TransactionLog(context).parts()
                     .flatMap { it.list() }
                     .map { Category(null, it.category) }
                     .distinct()

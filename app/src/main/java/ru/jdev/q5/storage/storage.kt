@@ -17,7 +17,7 @@ class QCollection<T : Item>(private val source: File, parse: (IndexedValue<Strin
                 Log.d("QCollection", "Load data from ${source.absolutePath}")
                 FileInputStream(source).bufferedReader().lineSequence()
                         .withIndex()
-                        .map(parse)
+                        .map { parse(it) }
                         .toCollection(ArrayList<T>())
             } else {
                 Log.d("QCollection", "No data file found, create parent dirs at ${source.parentFile.absolutePath}")
@@ -37,8 +37,7 @@ class QCollection<T : Item>(private val source: File, parse: (IndexedValue<Strin
     }
 
     fun persist() {
-        val content = elements.map { serialize }
-                .joinToString("\n")
+        val content = elements.joinToString("\n") { serialize(it) }
         BufferedWriter(FileWriter(source)).use {
             it.write(content)
         }

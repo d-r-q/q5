@@ -2,13 +2,13 @@ package ru.jdev.q5
 
 import android.annotation.SuppressLint
 import android.os.Build
-import ru.jdev.q5.R.string.*
+import ru.jdev.q5.storage.Item
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-data class Transaction(val date: TrxDate, val sum: String, val category: String, val comment: String, val device: String, val source: String) : Serializable {
+data class Transaction(override val id: Int?, val date: TrxDate, val sum: String, val category: String, val comment: String, val device: String, val source: String) : Serializable, Item {
 
     companion object {
 
@@ -16,8 +16,8 @@ data class Transaction(val date: TrxDate, val sum: String, val category: String,
 
         private val delimiter = ';'
 
-        fun parse(line: String): Transaction {
-
+        fun parse(sourceLine: IndexedValue<String>): Transaction {
+            val line = sourceLine.value
             val fieldsV1 = line
                     .replace("\uFEFF", "") // удаление BOM-ов
                     .split("\",\"".toRegex())
@@ -37,14 +37,14 @@ data class Transaction(val date: TrxDate, val sum: String, val category: String,
             val device = if (fields.size > 5) fields[5] else notParsed
             val source = if (fields.size > 6) fields[6] else notParsed
             return try {
-                Transaction(if (v1) TrxDate.parseV1(date, time) else TrxDate(date, time), sum, cat, comment, device, source)
+                Transaction(sourceLine.index, if (v1) TrxDate.parseV1(date, time) else TrxDate(date, time), sum, cat, comment, device, source)
             } catch (e: ParseException) {
-                Transaction(TrxDate("00.00.00", "00:00"), "0", notParsed, notParsed, notParsed, notParsed)
+                Transaction(null, TrxDate("00.00.00", "00:00"), "0", notParsed, notParsed, notParsed, notParsed)
             }
         }
     }
 
-    constructor(sum: String, category: String, comment: String, source: String, datetime: TrxDate = TrxDate(Date())) : this(datetime, sum, category, comment, Build.DEVICE, source)
+    constructor(sum: String, category: String, comment: String, source: String, datetime: TrxDate = TrxDate(Date())) : this(null, datetime, sum, category, comment, Build.DEVICE, source)
 
     fun toCsvLine() = "\"${date.date()}\"$delimiter\"${date.time()}\"$delimiter\"${sum.replace('.', ',')}\"$delimiter\"$category\"$delimiter\"${echoiedComment()}\"$delimiter\"$device\"$delimiter\"$source\""
             .replace("\n", "")
