@@ -48,7 +48,7 @@ class LogActivity : AppCompatActivity() {
             startActivity(configIntent)
         }
         with(find<Spinner>(R.id.log_part)) {
-            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, log.parts().sortedByDescending { it.name })
+            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, log.partNames().sortedByDescending { it })
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             this.adapter = adapter
             this.setSelection(0)
@@ -111,7 +111,8 @@ class LogActivity : AppCompatActivity() {
         val table = find<TableLayout>(R.id.table)
 
         table.removeAllViews()
-        val part = find<Spinner>(R.id.log_part).selectedItem as LogPart?
+        val partName = find<Spinner>(R.id.log_part).selectedItem as String?
+        val part = partName?.let { log.part(it) }
         // сейчас что сортировка по дате, что по сумме интересует по убыванию, так что компараторы сортируют по возрастанию,
         // а "оборачиваем" здесь
         val trxes = (part?.list()?.toList() ?: listOf()).sortedWith(trxComparator).asReversed()

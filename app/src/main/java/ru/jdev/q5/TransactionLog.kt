@@ -33,15 +33,18 @@ class TransactionLog(private val context: Context) {
 
     fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart))
 
-    fun parts(): List<LogPart> {
-        Log.d("transactionLog", "parts")
+    fun partNames(): List<String> {
+        Log.d("transactionLog", "partsFiles")
         if (!(context.getExternalFilesDir(null)?.exists() ?: false)) {
             return listOf()
         }
         return context.getExternalFilesDir(null)
                 .listFiles({ file -> file.name.endsWith(".csv") })
-                .map(::LogPart)
+                .map { it.name }
     }
+
+    fun parts() = partNames()
+            .map { part(it) }
 
     fun isExternalStorageWritable(): Boolean {
         val state = Environment.getExternalStorageState()
@@ -56,7 +59,7 @@ class TransactionLog(private val context: Context) {
 class LogPart(private val content: File) {
 
     val name: String = content.name
-    private val transactions = QCollection<Transaction>(content, { line -> parse(line)}, { it -> it.toCsvLine()})
+    private val transactions = QCollection<Transaction>(content, { line -> parse(line) }, { it -> it.toCsvLine() })
 
     fun list(): List<Transaction> = transactions.list()
 
@@ -76,7 +79,7 @@ class LogPart(private val content: File) {
         val writer = BufferedWriter(OutputStreamWriter(out, "UTF-8"))
         out.write(UTF_8_BOM)
         BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
-                .forEach { writer.write(it); writer.newLine()  }
+                .forEach { writer.write(it); writer.newLine() }
         writer.flush()
         Log.d("LogPart", "Out: ${String(out.toByteArray())}")
         return out.toByteArray()
