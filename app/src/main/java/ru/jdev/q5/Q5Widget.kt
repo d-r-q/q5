@@ -65,7 +65,7 @@ class Q5Widget : AppWidgetProvider() {
             val categories = Categories(context)
             val views = RemoteViews(context.packageName, R.layout.q5_widget)
 
-            for (i in 0..15) {
+            for (i in 0 until categories.names().size) {
                 val category = categories.names()[i]
                 val d = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
                 val displaySize = Point()
