@@ -71,7 +71,7 @@ class LogActivity : AppCompatActivity() {
     }
 
     private fun share(): Boolean {
-        val part = find<Spinner>(R.id.log_part).selectedItem as LogPart?
+        val part = selectedPart()
         if (part == null) {
             toast("Не выбран журнал")
             return false
@@ -111,8 +111,7 @@ class LogActivity : AppCompatActivity() {
         val table = find<TableLayout>(R.id.table)
 
         table.removeAllViews()
-        val partName = find<Spinner>(R.id.log_part).selectedItem as String?
-        val part = partName?.let { log.part(it) }
+        val part = selectedPart()
         // сейчас что сортировка по дате, что по сумме интересует по убыванию, так что компараторы сортируют по возрастанию,
         // а "оборачиваем" здесь
         val trxes = (part?.list()?.toList() ?: listOf()).sortedWith(trxComparator).asReversed()
@@ -135,6 +134,12 @@ class LogActivity : AppCompatActivity() {
         val fmt = NumberFormat.getCurrencyInstance()
         val row = createRow("", fmt.format(trxes.sumByDouble { it.sum.replace(',', '.').toDouble() }), "Итого")
         table.addView(row)
+    }
+
+    private fun selectedPart(): LogPart? {
+        val partName = find<Spinner>(R.id.log_part).selectedItem as String?
+        val part = partName?.let { log.part(it) }
+        return part
     }
 
     private fun createRow(date: String, sum: String, category: String): TableRow {
