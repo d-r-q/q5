@@ -1,9 +1,9 @@
 package ru.jdev.q5
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
@@ -84,7 +84,7 @@ class LogActivity : AppCompatActivity() {
             it.flush()
         }
 
-        val path = Uri.fromFile(outputFile)
+        val path = FileProvider.getUriForFile(this, "ru.jdev.q5.fileprovider", outputFile)
         val sendIntent = Intent(Intent.ACTION_SEND)
         sendIntent.type = "text/csv"
         sendIntent.putExtra(Intent.EXTRA_STREAM, path)

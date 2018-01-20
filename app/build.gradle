@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     defaultConfig {
         applicationId "ru.jdev.q5"
         minSdkVersion 21
-        targetSdkVersion 25
-        versionCode 25
-        versionName "25.0"
+        targetSdkVersion 26
+        versionCode 26
+        versionName "26.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -30,8 +30,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'org.jetbrains.anko:anko-sdk21:0.9.1'
 
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.android.support:design:25.1.1'
+    compile 'com.android.support:appcompat-v7:26.1.1'
+    compile 'com.android.support:design:26.1.1'
     testCompile 'junit:junit:4.12'
 }
 repositories {
