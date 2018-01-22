@@ -1,14 +1,17 @@
 package ru.jdev.q5
 
-import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.Telephony
+import android.support.v7.app.NotificationCompat
 import android.util.Log
 import java.io.Serializable
+
 
 class IncomingSms : BroadcastReceiver() {
 
@@ -43,7 +46,13 @@ class IncomingSms : BroadcastReceiver() {
                     log.print("Possible category: $possibleCategory")
                     val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                     log.print("Notification manager: $mNotificationManager")
-                    with(Notification.Builder(context)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val mChannel = NotificationChannel("q5-incoming-sms", "Обнаружена транзакция", NotificationManager.IMPORTANCE_DEFAULT)
+                        mNotificationManager.createNotificationChannel(mChannel);
+                    }
+
+                    with(NotificationCompat.Builder(context)) {
+                        setChannelId("q5-incoming-sms")
                         setSmallIcon(R.drawable.icon_transparent)
                         setContentTitle("Обнаружена транзакция")
                         val contentText = if (possibleCategory != null) {
@@ -71,7 +80,7 @@ class IncomingSms : BroadcastReceiver() {
                             saveIntent.putExtra("trx", Transaction(null, sum, possibleCategory, message, "sms"))
                             saveIntent.putExtra("notificationId", nId)
                             val savePendingIntent = PendingIntent.getService(context, 0, saveIntent, 0)
-                            addAction(Notification.Action.Builder(android.R.drawable.ic_menu_save, "Сохранить", savePendingIntent).build())
+                            addAction(android.support.v4.app.NotificationCompat.Action.Builder(android.R.drawable.ic_menu_save, "Сохранить", savePendingIntent).build())
                         }
                         setAutoCancel(true)
                         val res = build()
@@ -102,7 +111,7 @@ class IncomingSms : BroadcastReceiver() {
     private fun parseAlfaBankSms(text: String): AlfaBankSmsCheck? {
         val parts = text.split(";").map(String::trim)
         Log.d("parseAlfaBankSms", parts.toString())
-        if (parts.size < 2|| parts[1] != "Pokupka") {
+        if (parts.size < 2 || parts[1] != "Pokupka") {
             return null
         }
 

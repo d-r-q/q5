@@ -6,10 +6,10 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "ru.jdev.q5"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 26
-        versionCode 26
-        versionName "26.0"
+        versionCode 27
+        versionName "27.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
