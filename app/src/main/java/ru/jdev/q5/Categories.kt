@@ -7,6 +7,8 @@ import java.io.File
 
 data class Category(override val id: Int?, val name: String) : Item
 
+private val DEFAULT_CATEGORIES = listOf("Продукты", "Рестораны", "Здоровье", "Машина")
+
 class Categories(private val context: Context) {
 
     val categories = QCollection<Category>(File(context.getExternalFilesDir(null), "categories.txt"), { c -> Category(c.index, c.value) }, Category::name)
@@ -18,6 +20,11 @@ class Categories(private val context: Context) {
                     .map { Category(null, it.category) }
                     .distinct()
                     .forEach { categories.with(it) }
+        }
+        if (categories.list().isEmpty()) {
+            DEFAULT_CATEGORIES.forEach {
+                categories.with(Category(null, it))
+            }
         }
     }
 
