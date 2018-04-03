@@ -115,9 +115,9 @@ class IncomingSms : BroadcastReceiver() {
             return null
         }
 
-        val match = """.*Summa: (\d+(,\d+)?) RUR.*""".toRegex().matchEntire(parts[3])
+        val match = """.*Summa: ((\d+ ?)+(,\d+)?) RUR.*""".toRegex().matchEntire(parts[3])
         Log.d("parseSms", match?.toString() ?: "not matched")
-        val sum = match?.groups?.get(1)?.value
+        val sum = match?.groups?.get(1)?.value?.replace(" *".toRegex(), "")
         sum ?: return null
         return AlfaBankSmsCheck(sum, parts[5])
     }
