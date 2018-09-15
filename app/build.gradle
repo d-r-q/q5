@@ -8,8 +8,8 @@ android {
         applicationId "ru.jdev.q5"
         minSdkVersion 24
         targetSdkVersion 26
-        versionCode 29
-        versionName "29.0"
+        versionCode 30
+        versionName "30.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Telephony
-import android.support.v7.app.NotificationCompat
+import android.support.v4.app.NotificationCompat
 import android.util.Log
 import java.io.Serializable
 
@@ -48,11 +48,10 @@ class IncomingSms : BroadcastReceiver() {
                     log.print("Notification manager: $mNotificationManager")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val mChannel = NotificationChannel("q5-incoming-sms", "Обнаружена транзакция", NotificationManager.IMPORTANCE_DEFAULT)
-                        mNotificationManager.createNotificationChannel(mChannel);
+                        mNotificationManager.createNotificationChannel(mChannel)
                     }
 
-                    with(NotificationCompat.Builder(context)) {
-                        setChannelId("q5-incoming-sms")
+                    with(NotificationCompat.Builder(context, "q5-incoming-sms")) {
                         setSmallIcon(R.drawable.icon_transparent)
                         setContentTitle("Обнаружена транзакция")
                         val contentText = if (possibleCategory != null) {
@@ -93,48 +92,44 @@ class IncomingSms : BroadcastReceiver() {
             } // bundle is null
 
         } catch (e: Exception) {
-            Log.e("SmsReceiver", "Exception smsReceiver" + e)
+            Log.e("SmsReceiver", "Exception smsReceiver $e")
             log.print(e.toString())
         }
 
     }
 
-    fun parseSms(text: String): SmsCheck? {
-        val parsers = listOf(
-                this::parseAlfaBankSms,
-                this::parseKukuruzaSms)
-        return parsers.asSequence()
-                .map { it(text) }
-                .find { it != null }
-    }
+}
 
-    private fun parseAlfaBankSms(text: String): AlfaBankSmsCheck? {
-        val parts = text.split(";").map(String::trim)
-        Log.d("parseAlfaBankSms", parts.toString())
-        if (parts.size < 2 || parts[1] != "Pokupka") {
-            return null
-        }
+fun parseSms(text: String): SmsCheck? {
+    val parsers: List<(String) -> SmsCheck?> = listOf(
+            ::parseAlfaBankSms,
+            ::parseKukuruzaSms)
+    return parsers.asSequence()
+            .map { it(text) }
+            .find { it != null }
+}
 
-        val match = """.*Summa: ((\d+ ?)+(,\d+)?) RUR.*""".toRegex().matchEntire(parts[3])
-        Log.d("parseSms", match?.toString() ?: "not matched")
-        val sum = match?.groups?.get(1)?.value?.replace(" *".toRegex(), "")
-        sum ?: return null
-        return AlfaBankSmsCheck(sum, parts[5])
+private fun parseAlfaBankSms(text: String): AlfaBankSmsCheck? {
+    // **3239 Pokupka Uspeshno Summa: 1 143 RUR Ostatok: 9 197,93 RUR RU/KOLTSOVO/TONUS 15.09.2018 08:47:30
+    val match = """.*Summa: ((\d+ ?)+(,\d+)?) (RUR|EUR|USD).*(RUR|EUR|USD) (.*) [\d.: ]{19}""".toRegex().matchEntire(text)
+    return if (match != null) {
+        AlfaBankSmsCheck(match.groups[1]!!.value.replace(" ", ""), match.groups[6]!!.value)
+    } else {
+        null
     }
+}
 
-    private fun parseKukuruzaSms(text: String): KukuruzaSmsCheck? {
-        // *7367; Pokupka: 189.00RUR; Ostatok: 1524.01RUR; UBER RU FEB21 EVNWM HE, help.uber.com; 20.02.2017 15:37; Tel 88007007710
-        val parts = text.split(";").map(String::trim)
-        Log.d("parseKukuruzaSms", parts.toString())
-        if (parts.size < 2 || !parts[1].startsWith("Pokupka")) {
-            return null
-        }
-        val match = """Pokupka: (\d+\.\d+)RUR.*""".toRegex().matchEntire(parts[1])
-        Log.d("parseSms", match?.toString() ?: "not matched")
-        val sum = match?.groups?.get(1)?.value
-        sum ?: return null
-        return KukuruzaSmsCheck(sum, parts[3])
+private fun parseKukuruzaSms(text: String): KukuruzaSmsCheck? {
+    val parts = text.split(";").map(String::trim)
+    Log.d("parseKukuruzaSms", parts.toString())
+    if (parts.size < 2 || !parts[1].startsWith("Pokupka")) {
+        return null
     }
+    val match = """Pokupka: (\d+\.\d+)RUR.*""".toRegex().matchEntire(parts[1])
+    Log.d("parseSms", match?.toString() ?: "not matched")
+    val sum = match?.groups?.get(1)?.value
+    sum ?: return null
+    return KukuruzaSmsCheck(sum, parts[3])
 }
 
 abstract class SmsCheck(val sum: String?, val place: String?) : Serializable
