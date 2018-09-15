@@ -16,20 +16,20 @@ class TransactionsParsingTest {
                 val lines = javaClass.getResourceAsStream("/transaction_parsing/170$month-$device-v2.csv")?.bufferedReader()?.lineSequence()
                 lines
                         ?.filter { it.trim().isNotEmpty() }
-                        ?.forEach { it ->
-                            val t = Transaction.parse(it)
-                            if (it.contains("\",\"")) {
+                        ?.forEachIndexed { idx, str ->
+                            val t = Transaction.parse(IndexedValue(idx, str))
+                            if (str.contains("\",\"")) {
                                 val c = Calendar.getInstance()
                                 c.time = t.date.dateTime
-                                Assert.assertEquals(it, 2017, c.get(Calendar.YEAR))
-                                Assert.assertEquals(it, month - 1, c.get(Calendar.MONTH))
+                                Assert.assertEquals(str, 2017, c.get(Calendar.YEAR))
+                                Assert.assertEquals(str, month - 1, c.get(Calendar.MONTH))
                                 Assert.assertNotEquals(Transaction.notParsed, t.sum)
                                 Assert.assertNotEquals(Transaction.notParsed, t.category)
                                 Assert.assertNotEquals(Transaction.notParsed, t.comment)
                                 Assert.assertNotEquals(Transaction.notParsed, t.device)
                                 Assert.assertNotEquals(Transaction.notParsed, t.source)
                             } else {
-                                Assert.assertEquals(it.replace("\uFEFF", ""), t.toCsvLine())
+                                Assert.assertEquals(str.replace("\uFEFF", ""), t.toCsvLine())
                             }
                         }
             }
