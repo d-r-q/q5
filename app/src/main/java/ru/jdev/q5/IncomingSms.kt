@@ -61,12 +61,12 @@ class IncomingSms : BroadcastReceiver() {
                         }
                         val nId = msg.indexOnIcc.let { if (it > -1) it else msg.timestampMillis.div(1000).toInt() }
                         setContentText(contentText)
-                        val configIntent = Intent(context, EnterSumActivity::class.java)
+                        val configIntent = Intent(context, TrxActivity::class.java)
                         configIntent.action = message
                         configIntent.putExtra("sum", sum)
                         configIntent.putExtra("comment", message)
                         configIntent.putExtra("smsCheck", smsCheck)
-                        configIntent.putExtra(EnterSumActivity.sourceExtra, "sms")
+                        configIntent.putExtra(TrxActivity.sourceExtra, "sms")
                         if (possibleCategory != null) {
                             configIntent.putExtra("category", possibleCategory)
                         }

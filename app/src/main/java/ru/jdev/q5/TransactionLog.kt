@@ -4,10 +4,17 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import qbit.Entity
+import qbit.attrIn
+import qbit.attrIs
 import ru.jdev.q5.Transaction.Companion.parse
-import ru.jdev.q5.storage.QCollection
+import ru.jdev.q5.storage.*
 import java.io.*
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 
 private val UTF_8_BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
@@ -16,20 +23,6 @@ class TransactionLog(private val context: Context) {
 
     private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
 
-    fun storeTrx(logPart: String?, trx: Transaction): Boolean {
-        if (!isExternalStorageWritable()) {
-            return false
-        }
-
-        val file = File(context.getExternalFilesDir(null), logPart ?: trxFileNameFormat.format(Date()))
-        Log.d("storeTrx", "${file.parentFile.exists()}")
-        if (!file.parentFile.exists()) {
-            Log.d("storeTrx", "Creating Q5 dir")
-            file.parentFile.mkdirs()
-        }
-        LogPart(file).with(trx)
-        return true
-    }
 
     fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart))
 
@@ -46,14 +39,6 @@ class TransactionLog(private val context: Context) {
     fun parts() = partNames()
             .map { part(it) }
 
-    private fun isExternalStorageWritable(): Boolean {
-        val state = Environment.getExternalStorageState()
-        if (Environment.MEDIA_MOUNTED == state) {
-            return true
-        }
-        return false
-    }
-
 }
 
 class LogPart(private val content: File) {
@@ -62,12 +47,6 @@ class LogPart(private val content: File) {
     private val transactions = QCollection(content, { line -> parse(line) }, { it -> it.toCsvLine() })
 
     fun list(): List<Transaction> = transactions.list()
-
-    fun with(trx: Transaction): LogPart {
-        transactions.with(trx)
-        transactions.persist()
-        return this
-    }
 
     fun sharableView(): ByteArray {
         val file = content

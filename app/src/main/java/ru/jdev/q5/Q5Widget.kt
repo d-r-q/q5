@@ -71,11 +71,11 @@ class Q5Widget : AppWidgetProvider() {
                 val displaySize = Point()
                 d.getSize(displaySize)
                 views.setImageViewBitmap(buttonViews[i], getCategoryImage(categories.names()[i], displaySize.x))
-                val configIntent = Intent(context, EnterSumActivity::class.java)
+                val configIntent = Intent(context, TrxActivity::class.java)
                 configIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 configIntent.action = category
                 configIntent.putExtra("category", category)
-                configIntent.putExtra(EnterSumActivity.sourceExtra, "manual")
+                configIntent.putExtra(TrxActivity.sourceExtra, "manual")
                 val configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0)
                 views.setOnClickPendingIntent(buttonViews[i], configPendingIntent)
                 views.setOnClickPendingIntent(textViews[i], configPendingIntent)

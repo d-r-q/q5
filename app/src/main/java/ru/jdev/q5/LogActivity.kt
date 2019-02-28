@@ -14,18 +14,21 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.onItemSelectedListener
 import org.jetbrains.anko.toast
+import ru.jdev.q5.storage.ECat
+import ru.jdev.q5.storage.ETrx
 import java.io.File
 import java.io.FileOutputStream
 import java.math.BigDecimal
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
 class LogActivity : AppCompatActivity() {
 
-    private val dateFormat = SimpleDateFormat("dd/MMM")
     private val log = TransactionLog(this)
+    private val qLog = QTransactionLog(this)
     private val tableParams = FrameLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,12 +46,12 @@ class LogActivity : AppCompatActivity() {
         updateTable()
 
         find<FloatingActionButton>(R.id.fab).onClick {
-            val configIntent = Intent(this, EnterSumActivity::class.java)
-            configIntent.putExtra(EnterSumActivity.sourceExtra, "manual")
+            val configIntent = Intent(this, TrxActivity::class.java)
+            configIntent.putExtra(TrxActivity.sourceExtra, "manual")
             startActivity(configIntent)
         }
         with(find<Spinner>(R.id.log_part)) {
-            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, log.partNames().sortedByDescending { it })
+            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, qLog.months())
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             this.adapter = adapter
             this.setSelection(0)
@@ -57,8 +60,8 @@ class LogActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_activity_log, menu);
-        return true;
+        menuInflater.inflate(R.menu.menu_activity_log, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -110,28 +113,21 @@ class LogActivity : AppCompatActivity() {
         val table = find<TableLayout>(R.id.table)
 
         table.removeAllViews()
-        val part = selectedPart()
-        // сейчас что сортировка по дате, что по сумме интересует по убыванию, так что компараторы сортируют по возрастанию,
-        // а "оборачиваем" здесь
-        val trxes = (part?.list()?.toList() ?: listOf()).sortedWith(trxComparator).asReversed()
+        val month = find<Spinner>(R.id.log_part).selectedItem as LocalDate? ?: LocalDate.now()
+        val trxes = qLog.monthTrxs(month!!)
+        val datePattern = DateTimeFormatter.ofPattern("dd/MMM")
         trxes.forEach { trx ->
-            val row = createRow(dateFormat.format(trx.date.dateTime), trx.sum, trx.category)
+            val row = createRow(trx[ETrx.dateTime].format(datePattern), (BigDecimal(trx[ETrx.sum]) / BigDecimal(100)).toString(), trx[ETrx.category][ECat.name])
             row.onClick {
-                val configIntent = Intent(this, EnterSumActivity::class.java)
-                configIntent.putExtra(EnterSumActivity.logPartExtra, part!!.name)
-                configIntent.putExtra(EnterSumActivity.trxIdExtra, trx.id)
-                configIntent.putExtra("sum", trx.sum)
-                configIntent.putExtra("category", trx.category)
-                configIntent.putExtra("comment", trx.comment)
-                configIntent.putExtra("date", trx.date.date())
-                configIntent.putExtra("time", trx.date.time())
-                startActivity(configIntent)
+                val trxFormIntent = Intent(this, TrxActivity::class.java)
+                trxFormIntent.putExtra("id", trx.eid.value())
+                startActivity(trxFormIntent)
             }
             table.addView(row)
         }
 
-        val fmt = NumberFormat.getCurrencyInstance()
-        val row = createRow("", fmt.format(trxes.sumByDouble { it.sum.replace(',', '.').toDouble() }), "Итого")
+        // todo: val fmt = NumberFormat.getCurrencyInstance()
+        val row = createRow("", (BigDecimal(trxes.sumBy { it[ETrx.sum].toInt() }) / BigDecimal(100)).toString(), "Итого")
         table.addView(row)
     }
 

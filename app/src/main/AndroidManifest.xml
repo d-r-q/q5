@@ -39,7 +39,7 @@
         </receiver>
 
         <activity
-            android:name=".EnterSumActivity"
+            android:name=".TrxActivity"
             android:windowSoftInputMode="stateAlwaysVisible">
         </activity>
 

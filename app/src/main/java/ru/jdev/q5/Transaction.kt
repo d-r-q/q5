@@ -6,6 +6,8 @@ import ru.jdev.q5.storage.Item
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 import java.util.Arrays.asList
 
@@ -87,6 +89,7 @@ class TrxDate(val dateTime: Date) : Serializable {
 
     fun date(): String = dateFormat.format(dateTime)
     fun time(): String = timeFormat.format(dateTime)
+    fun zonedDateTime(): ZonedDateTime = ZonedDateTime.ofInstant(dateTime.toInstant(), ZoneId.systemDefault())
 }
 
 fun SimpleDateFormat.matches(str: String) = try {

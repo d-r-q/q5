@@ -1,6 +1,8 @@
 package ru.jdev.q5
 
 import android.content.Context
+import android.view.Gravity.apply
+import ru.jdev.q5.R.id.all
 import ru.jdev.q5.storage.Item
 import ru.jdev.q5.storage.QCollection
 import java.io.File
@@ -11,14 +13,16 @@ private val DEFAULT_CATEGORIES = listOf("Продукты", "Рестораны"
 
 class Categories(private val context: Context) {
 
-    val categories = QCollection<Category>(File(context.getExternalFilesDir(null), "categories.txt"), { c -> Category(c.index, c.value) }, Category::name)
+    private val categories = QCollection(File(context.getExternalFilesDir(null), "categories.txt"), { c -> Category(c.index, c.value) }, Category::name)
 
     init {
         if (categories.list().isEmpty()) {
             TransactionLog(context).parts()
                     .flatMap { it.list() }
+                    .asSequence()
                     .map { Category(null, it.category) }
                     .distinct()
+                    .toList()
                     .forEach { categories.with(it) }
         }
         if (categories.list().isEmpty()) {

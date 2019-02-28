@@ -9,12 +9,13 @@ import android.widget.EditText
 import android.widget.Spinner
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
+import java.nio.file.Files.find
 import java.util.*
 
 
-class EnterSumActivity : Activity() {
+class TrxActivity : Activity() {
 
-    private val trxLog = TransactionLog(this)
+    private val trxLog = QTransactionLog(this)
     private lateinit var categories: Categories
     private lateinit var source: String
     private var smsCheck: SmsCheck? = null
@@ -87,7 +88,7 @@ class EnterSumActivity : Activity() {
             toast("Неверный формат времени (чч:мм)")
             return false
         }
-        if (!trxLog.storeTrx(logPart, Transaction(id, sum, category, comment, source, TrxDate(date, time)))) {
+        if (!trxLog.storeTrx(Transaction(id, sum, category, comment, source, TrxDate(date, time)))) {
             toast("Внешнее хранилище недоступно")
             return false
         }
