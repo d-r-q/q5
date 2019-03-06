@@ -7,6 +7,7 @@ import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Arrays.asList
 
 data class Transaction(override val id: Int?, val date: TrxDate, val sum: String, val category: String, val comment: String, val device: String, val source: String) : Serializable, Item {
 
@@ -49,6 +50,15 @@ data class Transaction(override val id: Int?, val date: TrxDate, val sum: String
     fun toCsvLine() = "\"${date.date()}\"$delimiter\"${date.time()}\"$delimiter\"${sum.replace('.', ',')}\"$delimiter\"$category\"$delimiter\"${echoiedComment()}\"$delimiter\"$device\"$delimiter\"$source\""
             .replace("\n", "")
 
+    fun toExternalCsvLine() =
+            asList(date.date(), date.time(), "-" + sum.replace('.', ','), category, echoiedComment(),
+                    device, source,
+                    "Расход", "Факт", date.dateTime.month + 1, 1900 + date.dateTime.year)
+                    .joinToString(delimiter.toString()) {
+                        "\"$it\""
+                    }
+
+
     private fun echoiedComment() = comment.replace("\"", "\"\"")
 }
 
@@ -56,12 +66,12 @@ data class Transaction(override val id: Int?, val date: TrxDate, val sum: String
 class TrxDate(val dateTime: Date) : Serializable {
 
     companion object {
-        val datePatternV1 = "yy.MM.dd"
+        private const val datePatternV1 = "yy.MM.dd"
 
-        val datePattern = "dd.MM.yyyy"
-        val timePattern = "HH:mm"
+        private const val datePattern = "dd.MM.yyyy"
+        private const val timePattern = "HH:mm"
 
-        val dateTimeFormatV1 = SimpleDateFormat("$datePatternV1 $timePattern")
+        private val dateTimeFormatV1 = SimpleDateFormat("$datePatternV1 $timePattern")
 
         private val dateFormat = SimpleDateFormat(datePattern)
         private val timeFormat = SimpleDateFormat(timePattern)

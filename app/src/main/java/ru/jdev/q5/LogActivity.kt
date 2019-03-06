@@ -77,8 +77,7 @@ class LogActivity : AppCompatActivity() {
             return false
         }
 
-        val outputDir = this.externalCacheDir
-        val outputFile = File.createTempFile(part.name, ".csv", outputDir)
+        val outputFile = File(applicationContext.externalCacheDir, part.name)
         FileOutputStream(outputFile).use {
             it.write(part.sharableView())
             it.flush()

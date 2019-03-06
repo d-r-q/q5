@@ -46,7 +46,7 @@ class TransactionLog(private val context: Context) {
     fun parts() = partNames()
             .map { part(it) }
 
-    fun isExternalStorageWritable(): Boolean {
+    private fun isExternalStorageWritable(): Boolean {
         val state = Environment.getExternalStorageState()
         if (Environment.MEDIA_MOUNTED == state) {
             return true
@@ -59,7 +59,7 @@ class TransactionLog(private val context: Context) {
 class LogPart(private val content: File) {
 
     val name: String = content.name
-    private val transactions = QCollection<Transaction>(content, { line -> parse(line) }, { it -> it.toCsvLine() })
+    private val transactions = QCollection(content, { line -> parse(line) }, { it -> it.toCsvLine() })
 
     fun list(): List<Transaction> = transactions.list()
 
@@ -78,8 +78,9 @@ class LogPart(private val content: File) {
         val out = ByteArrayOutputStream()
         val writer = BufferedWriter(OutputStreamWriter(out, "UTF-8"))
         out.write(UTF_8_BOM)
-        BufferedReader(InputStreamReader(FileInputStream(file), "UTF-8")).lineSequence()
-                .forEach { writer.write(it); writer.newLine() }
+        list().forEach {
+            writer.write(it.toExternalCsvLine()); writer.newLine()
+        }
         writer.flush()
         Log.d("LogPart", "Out: ${String(out.toByteArray())}")
         return out.toByteArray()
