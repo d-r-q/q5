@@ -3,6 +3,8 @@ package ru.jdev.q5
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -64,9 +66,21 @@ class EnterSumActivity : Activity() {
                 }
             }
         }
+        with(find<Button>(R.id.delete_trx_button)) {
+            if (id != null && id >= 0) {
+                visibility = VISIBLE
+            } else {
+                visibility = GONE
+            }
+            setOnClickListener {
+                if (onDelete(logPart, id!!)) {
+                    finish()
+                }
+            }
+        }
     }
 
-    fun onOk(logPart: String?, id: Int?): Boolean {
+    private fun onOk(logPart: String?, id: Int?): Boolean {
         val sum = find<EditText>(R.id.sum_input).text.toString()
         val comment = find<EditText>(R.id.comment_input).text.toString()
         val category = find<Spinner>(R.id.category_input).selectedItem.toString()
@@ -89,6 +103,14 @@ class EnterSumActivity : Activity() {
         }
         if (!trxLog.storeTrx(logPart, Transaction(id, sum, category, comment, source, TrxDate(date, time)))) {
             toast("Внешнее хранилище недоступно")
+            return false
+        }
+        return true
+    }
+
+    private fun onDelete(logPart: String?, id: Int): Boolean {
+        if (!trxLog.deleteTrx(logPart, id)) {
+            toast("Ошибка удаления")
             return false
         }
         return true

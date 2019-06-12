@@ -31,15 +31,30 @@ class TransactionLog(private val context: Context) {
         return true
     }
 
+    fun deleteTrx(logPart: String?, id: Int): Boolean {
+        if (!isExternalStorageWritable()) {
+            return false
+        }
+
+        val file = File(context.getExternalFilesDir(null), logPart ?: trxFileNameFormat.format(Date()))
+        Log.d("deleteTrx", "${file.parentFile.exists()}")
+        if (!file.parentFile.exists()) {
+            Log.d("deleteTrx", "Creating Q5 dir")
+            file.parentFile.mkdirs()
+        }
+        LogPart(file).delete(id)
+        return true
+    }
+
     fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart))
 
     fun partNames(): List<String> {
         Log.d("transactionLog", "partsFiles")
-        if (!(context.getExternalFilesDir(null)?.exists() ?: false)) {
+        if (context.getExternalFilesDir(null)?.exists() != true) {
             return listOf()
         }
         return context.getExternalFilesDir(null)
-                .listFiles({ file -> file.name.endsWith(".csv") })
+                .listFiles { file -> file.name.endsWith(".csv") }
                 .map { it.name }
     }
 
@@ -65,6 +80,12 @@ class LogPart(private val content: File) {
 
     fun with(trx: Transaction): LogPart {
         transactions.with(trx)
+        transactions.persist()
+        return this
+    }
+
+    fun delete(id: Int): LogPart {
+        transactions.delete(id)
         transactions.persist()
         return this
     }

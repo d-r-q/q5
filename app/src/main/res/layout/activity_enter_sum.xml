@@ -104,5 +104,13 @@
         android:layout_below="@id/datetime_line"
         android:text="@string/ok" />
 
+    <Button
+            android:id="@+id/delete_trx_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/save_sum_button"
+            android:layout_below="@id/datetime_line"
+            android:text="@string/delete" />
+
 </RelativeLayout>
 

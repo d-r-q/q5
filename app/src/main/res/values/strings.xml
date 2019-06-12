@@ -4,6 +4,7 @@
     <string name="add_widget">Add widget</string>
     <string name="sum">Сумма:</string>
     <string name="ok">Ок</string>
+    <string name="delete">Удалить</string>
     <string name="comment">Комментарий:</string>
     <string name="date">Дата:</string>
     <string name="title_activity_log">Q5</string>
