@@ -1,108 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_enter_sum"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="ru.jdev.q5.TrxActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/activity_enter_sum"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="ru.jdev.q5.TrxActivity">
 
     <TextView
-        android:id="@+id/sum_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:labelFor="@+id/sum_input"
-        android:text="@string/sum" />
+            android:id="@+id/sum_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/sum_input"
+            android:text="@string/sum"/>
 
     <EditText
-        android:id="@+id/sum_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/sum_label"
-        android:inputType="numberDecimal"
-        android:windowSoftInputMode="stateVisible" />
+            android:id="@+id/sum_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sum_label"
+            android:inputType="numberDecimal"
+            android:windowSoftInputMode="stateVisible"/>
 
     <TextView
-        android:id="@+id/category_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/sum_input"
-        android:labelFor="@+id/category_input"
-        android:layout_marginTop="10dp"
-        android:text="Категория:" />
-
-    <Spinner
-        android:id="@+id/category_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/category_label"
-        android:layout_alignBaseline="@id/category_label"
-        android:paddingBottom="5dp"
-        android:paddingTop="10dp" />
-
-    <TextView
-        android:id="@+id/comment_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/category_label"
-        android:labelFor="@+id/comment_input"
-        android:layout_marginTop="10dp"
-        android:text="@string/comment" />
-
-    <EditText
-        android:id="@+id/comment_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/comment_label"
-        android:maxLines="3"
-        android:minLines="3"
-        android:windowSoftInputMode="stateVisible" />
-
-    <LinearLayout
-        android:id="@+id/datetime_line"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/comment_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/date_label"
+            android:id="@+id/category_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:labelFor="@+id/date_input"
-            android:text="@string/date" />
-        <EditText
-            android:id="@+id/date_input"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_below="@+id/sum_input"
+            android:labelFor="@+id/category_input"
+            android:layout_marginTop="10dp"
+            android:text="Категория:"/>
+
+    <Spinner
+            android:id="@+id/category_input"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="date"
-            android:maxLines="1"
-            android:minLines="1"
-            android:windowSoftInputMode="stateVisible" />
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@+id/category_label"
+            android:layout_alignBaseline="@id/category_label"
+            android:paddingBottom="5dp"
+            android:paddingTop="10dp"/>
+
+    <TextView
+            android:id="@+id/comment_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/category_label"
+            android:labelFor="@+id/comment_input"
+            android:layout_marginTop="10dp"
+            android:text="@string/comment"/>
+
+    <EditText
+            android:id="@+id/comment_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/comment_label"
+            android:maxLines="3"
+            android:minLines="3"
+            android:windowSoftInputMode="stateVisible"/>
+
+    <LinearLayout
+            android:id="@+id/datetime_line"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/comment_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:id="@+id/date_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/date_input"
+                android:text="@string/date"/>
+        <EditText
+                android:id="@+id/date_input"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:maxLines="1"
+                android:minLines="1"
+                android:windowSoftInputMode="stateVisible"/>
 
         <EditText
-            android:id="@+id/time_input"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:inputType="time"
-            android:maxLines="1"
-            android:minLines="1"
-            android:windowSoftInputMode="stateVisible" />
+                android:id="@+id/time_input"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:inputType="time"
+                android:maxLines="1"
+                android:minLines="1"
+                android:windowSoftInputMode="stateVisible"/>
     </LinearLayout>
 
     <Button
-        android:id="@+id/save_sum_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@id/sum_input"
-        android:layout_below="@id/datetime_line"
-        android:text="@string/ok" />
+            android:id="@+id/save_sum_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/sum_input"
+            android:layout_below="@id/datetime_line"
+            android:text="@string/ok"/>
 
 </RelativeLayout>
 

@@ -11,7 +11,8 @@ import java.time.ZonedDateTime
 import java.util.*
 import java.util.Arrays.asList
 
-data class Transaction(override val id: Int?, val date: TrxDate, val sum: String, val category: String, val comment: String, val device: String, val source: String) : Serializable, Item {
+@Deprecated("Use qbit")
+data class Transaction(override val id: Long?, val date: TrxDate, val sum: String, val category: String, val comment: String, val device: String, val source: String) : Serializable, Item {
 
     companion object {
 
@@ -40,28 +41,13 @@ data class Transaction(override val id: Int?, val date: TrxDate, val sum: String
             val device = if (fields.size > 5) fields[5] else notParsed
             val source = if (fields.size > 6) fields[6] else notParsed
             return try {
-                Transaction(sourceLine.index, if (v1) TrxDate.parseV1(date, time) else TrxDate(date, time), sum, cat, comment, device, source)
+                Transaction(sourceLine.index.toLong(), if (v1) TrxDate.parseV1(date, time) else TrxDate(date, time), sum, cat, comment, device, source)
             } catch (e: ParseException) {
                 Transaction(null, TrxDate("00.00.00", "00:00"), "0", notParsed, notParsed, notParsed, notParsed)
             }
         }
     }
 
-    constructor(id: Int?, sum: String, category: String, comment: String, source: String, datetime: TrxDate = TrxDate(Date())) : this(id, datetime, sum, category, comment, Build.DEVICE, source)
-
-    fun toCsvLine() = "\"${date.date()}\"$delimiter\"${date.time()}\"$delimiter\"${sum.replace('.', ',')}\"$delimiter\"$category\"$delimiter\"${echoiedComment()}\"$delimiter\"$device\"$delimiter\"$source\""
-            .replace("\n", "")
-
-    fun toExternalCsvLine() =
-            asList(date.date(), date.time(), "-" + sum.replace('.', ','), category, echoiedComment(),
-                    device, source,
-                    "Расход", "Факт", date.dateTime.month + 1, 1900 + date.dateTime.year)
-                    .joinToString(delimiter.toString()) {
-                        "\"$it\""
-                    }
-
-
-    private fun echoiedComment() = comment.replace("\"", "\"\"")
 }
 
 @SuppressLint("SimpleDateFormat")

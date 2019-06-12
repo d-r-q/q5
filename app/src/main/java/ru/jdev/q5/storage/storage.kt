@@ -10,27 +10,26 @@ import qbit.schema.eq
 import qbit.storage.FileSystemStorage
 import ru.jdev.q5.Categories
 import ru.jdev.q5.TransactionLog
-import ru.jdev.q5.storage.ECat.name
-import ru.jdev.q5.storage.ETrx.category
-import ru.jdev.q5.storage.ETrx.comment
-import ru.jdev.q5.storage.ETrx.dateTime
-import ru.jdev.q5.storage.ETrx.sum
-import ru.jdev.q5.storage.ETrx.device
-import ru.jdev.q5.storage.ETrx.source
-import java.io.BufferedWriter
+import ru.jdev.q5.storage.Cats.name
+import ru.jdev.q5.storage.Trxes.category
+import ru.jdev.q5.storage.Trxes.comment
+import ru.jdev.q5.storage.Trxes.dateTime
+import ru.jdev.q5.storage.Trxes.device
+import ru.jdev.q5.storage.Trxes.source
+import ru.jdev.q5.storage.Trxes.sum
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileWriter
+import java.math.BigDecimal
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
 interface Item {
-    val id: Int?
+    val id: Long?
 }
 
-object ETrx {
+object Trxes {
     private val trx = Namespace.of("q5", "transaction")
-    val sum = ScalarAttr(trx["sum"], QLong)
+    val sum = ScalarAttr(trx["sum"], QDecimal)
     val dateTime = ScalarAttr(trx["dateTime"], QZonedDateTime)
     val category = RefAttr(trx["category"])
     val comment = ScalarAttr(trx["comment"], QString)
@@ -38,7 +37,7 @@ object ETrx {
     val device = ScalarAttr(trx["device"], QString)
 }
 
-object ECat {
+object Cats {
 
     private val cat = Namespace.of("q5", "category")
 
@@ -48,14 +47,14 @@ object ECat {
 
 private var conn: LocalConn? = null
 
-fun openConn(ctx: Context): qbit.LocalConn {
+fun openConn(ctx: Context): LocalConn {
     var c = conn
     if (c != null) {
         return c
     }
 
-    val dbDir = ctx.getExternalFilesDir(null)!!.toPath().resolve("db")
-    c = qbit.qbit(FileSystemStorage(dbDir))
+    val dbDir = File(ctx.getExternalFilesDir(null)!!, "db")
+    c = qbit(FileSystemStorage(dbDir))
     conn = c
     ensureDbInitialized(c, ctx)
     ensureDbImported(c, ctx)
@@ -64,14 +63,14 @@ fun openConn(ctx: Context): qbit.LocalConn {
 }
 
 private fun ensureDbImported(conn: LocalConn, ctx: Context) {
-    if (!conn.db.query(hasAttr(sum)).isEmpty()) {
+    if (conn.db.query(hasAttr(sum)).firstOrNull() != null) {
         return
     }
 
-    val categories = HashMap<String, Entity>()
-    val importedCategories = ArrayList<Entity>()
-    val es = ArrayList<Entity>()
-    val log = TransactionLog(ctx)
+    val categories = HashMap<String, Entity<*>>()
+    val importedCategories = ArrayList<Entity<*>>()
+    val es = ArrayList<Entity<*>>()
+    @Suppress("DEPRECATION") val log = TransactionLog(ctx)
     log.partNames().forEach { part ->
         log.part(part).list().forEach {
             var category = categories[it.category]
@@ -87,9 +86,10 @@ private fun ensureDbImported(conn: LocalConn, ctx: Context) {
                 importedCategories.add(category)
             }
 
+            val entries = sum eq BigDecimal(it.sum.replace(",", "."))
             val e = Entity(dateTime eq ZonedDateTime.ofInstant(it.date.dateTime.toInstant(), ZoneId.systemDefault()),
-                    sum eq (it.sum.replace(",", ".").toDouble() * 100).toLong(),
-                    ETrx.category eq category,
+                    entries,
+                    Trxes.category eq category,
                     comment eq it.comment,
                     device eq it.device,
                     source eq it.source)
@@ -102,18 +102,19 @@ private fun ensureDbImported(conn: LocalConn, ctx: Context) {
 }
 
 private fun ensureDbInitialized(conn: LocalConn, ctx: Context) {
-    if (conn.db.query(attrIs(qbit.EAttr.name, "q5.category/name")).isEmpty()) {
+    if (conn.db.query(attrIs(EAttr.name, "q5.category/name")).none()) {
         val schema = listOf(sum, dateTime, category, comment, source, device, name)
         conn.persist(schema)
     }
 
-    if (conn.db.query(hasAttr(name)).isEmpty()) {
+    if (conn.db.query(hasAttr(name)).none()) {
         val defaultCats = Categories(ctx).names().map { Entity(name eq it) }
         conn.persist(defaultCats)
     }
 }
 
-class QCollection<T : Item>(private val source: File, parse: (IndexedValue<String>) -> T, private val serialize: (T) -> String) {
+@Deprecated("Use qbit")
+class QCollection<T : Item>(source: File, parse: (IndexedValue<String>) -> T) {
 
     private val elements: ArrayList<T> =
             if (source.exists()) {
@@ -135,7 +136,7 @@ class QCollection<T : Item>(private val source: File, parse: (IndexedValue<Strin
         if (id == null) {
             elements.add(item)
         } else {
-            elements[id] = item
+            elements[id.toInt()] = item
         }
     }
 

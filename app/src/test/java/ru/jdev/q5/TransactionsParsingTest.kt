@@ -17,17 +17,17 @@ class TransactionsParsingTest {
                 lines
                         ?.filter { it.trim().isNotEmpty() }
                         ?.forEachIndexed { idx, str ->
-                            val t = Transaction.parse(IndexedValue(idx, str))
+                            val t = QTransaction.parse(IndexedValue(idx, str))
                             if (str.contains("\",\"")) {
                                 val c = Calendar.getInstance()
                                 c.time = t.date.dateTime
                                 Assert.assertEquals(str, 2017, c.get(Calendar.YEAR))
                                 Assert.assertEquals(str, month - 1, c.get(Calendar.MONTH))
-                                Assert.assertNotEquals(Transaction.notParsed, t.sum)
-                                Assert.assertNotEquals(Transaction.notParsed, t.category)
-                                Assert.assertNotEquals(Transaction.notParsed, t.comment)
-                                Assert.assertNotEquals(Transaction.notParsed, t.device)
-                                Assert.assertNotEquals(Transaction.notParsed, t.source)
+                                Assert.assertNotEquals(QTransaction.notParsed, t.sum)
+                                Assert.assertNotEquals(QTransaction.notParsed, t.category)
+                                Assert.assertNotEquals(QTransaction.notParsed, t.comment)
+                                Assert.assertNotEquals(QTransaction.notParsed, t.device)
+                                Assert.assertNotEquals(QTransaction.notParsed, t.source)
                             } else {
                                 Assert.assertEquals(str.replace("\uFEFF", ""), t.toCsvLine())
                             }

@@ -11,6 +11,7 @@ import android.provider.Telephony
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import java.io.Serializable
+import java.math.BigDecimal
 
 
 class IncomingSms : BroadcastReceiver() {
@@ -32,10 +33,9 @@ class IncomingSms : BroadcastReceiver() {
 
                     val phoneNumber = msg.displayOriginatingAddress
 
-                    val senderNum = phoneNumber
                     val message = msg.displayMessageBody
 
-                    Log.i("SmsReceiver", "senderNum: $senderNum; message: $message")
+                    Log.i("SmsReceiver", "senderNum: $phoneNumber; message: $message")
 
                     log.print("msg: $message")
                     val smsCheck = parseSms(message) ?: continue
@@ -68,7 +68,7 @@ class IncomingSms : BroadcastReceiver() {
                         configIntent.putExtra("smsCheck", smsCheck)
                         configIntent.putExtra(TrxActivity.sourceExtra, "sms")
                         if (possibleCategory != null) {
-                            configIntent.putExtra("category", possibleCategory)
+                            configIntent.putExtra("category", possibleCategory.eid.value())
                         }
                         val configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0)
                         setContentIntent(configPendingIntent)
@@ -76,7 +76,7 @@ class IncomingSms : BroadcastReceiver() {
                         if (possibleCategory != null) {
                             val saveIntent = Intent(context, FastSaveService::class.java)
                             saveIntent.action = message
-                            saveIntent.putExtra("trx", Transaction(null, sum, possibleCategory, message, "sms"))
+                            saveIntent.putExtra("trx", QTransaction(BigDecimal(sum), possibleCategory, message, "sms").detouch())
                             saveIntent.putExtra("notificationId", nId)
                             val savePendingIntent = PendingIntent.getService(context, 0, saveIntent, 0)
                             addAction(android.support.v4.app.NotificationCompat.Action.Builder(android.R.drawable.ic_menu_save, "Сохранить", savePendingIntent).build())
@@ -94,6 +94,7 @@ class IncomingSms : BroadcastReceiver() {
         } catch (e: Exception) {
             Log.e("SmsReceiver", "Exception smsReceiver $e")
             log.print(e.toString())
+            e.printStackTrace()
         }
 
     }

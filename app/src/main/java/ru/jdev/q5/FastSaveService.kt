@@ -28,7 +28,7 @@ class FastSaveService : IntentService("FastSaveService") {
             val nId = intent.getIntExtra("notificationId", -1)
             Log.d("FastSaveService", nId.toString())
             manager.cancel(nId)
-            val trx = intent.getSerializableExtra("trx") as Transaction
+            val trx = intent.getSerializableExtra("trx") as QTransaction<*>
             if (!trxLog.storeTrx(trx)) {
                 mHandler.post { toast("Внешнее хранилище недоступно") }
             } else {
