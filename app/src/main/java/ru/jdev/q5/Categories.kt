@@ -11,15 +11,16 @@ private val DEFAULT_CATEGORIES = listOf("Продукты", "Рестораны"
 
 class Categories(private val context: Context) {
 
-    val categories = QCollection<Category>(File(context.getExternalFilesDir(null), "categories.txt"), { c -> Category(c.index, c.value) }, Category::name)
+    private val categories = QCollection(File(context.getExternalFilesDir(null), "categories.txt"), { c -> Category(c.index, c.value) }, Category::name)
 
     init {
         if (categories.list().isEmpty()) {
             TransactionLog(context).parts()
                     .flatMap { it.list() }
-                    .map { Category(null, it.category) }
-                    .distinct()
-                    .forEach { categories.with(it) }
+                    .groupBy { Category(null, it.category) }
+                    .entries
+                    .sortedByDescending { it.value.size }
+                    .forEach { categories.with(it.key) }
         }
         if (categories.list().isEmpty()) {
             DEFAULT_CATEGORIES.forEach {
