@@ -12,26 +12,31 @@ import android.view.MenuItem
 import android.widget.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
-import org.jetbrains.anko.onItemSelectedListener
-import org.jetbrains.anko.toast
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStreamWriter
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
-
+import android.app.DatePickerDialog
 
 class LogActivity : AppCompatActivity() {
 
     private val dateFormat = SimpleDateFormat("dd/MMM")
+    private val dd_mm_yy = SimpleDateFormat("dd.MM.yy")
     private val log = TransactionLog(this)
     private val tableParams = FrameLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
+    private var data: List<Transaction> = listOf()
+
+    private lateinit var fromDate: Date
+    private lateinit var toDate: Date
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val table = find<TableLayout>(R.id.table)
@@ -40,24 +45,76 @@ class LogActivity : AppCompatActivity() {
         table.setColumnShrinkable(1, true)
         table.setColumnShrinkable(2, true)
         table.setColumnStretchable(2, true)
-        updateTable()
 
         find<FloatingActionButton>(R.id.fab).onClick {
             val configIntent = Intent(this, EnterSumActivity::class.java)
             configIntent.putExtra(EnterSumActivity.sourceExtra, "manual")
             startActivity(configIntent)
         }
-        with(find<Spinner>(R.id.log_part)) {
-            val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, log.partNames().sortedByDescending { it })
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            this.adapter = adapter
-            this.setSelection(0)
-            this.onItemSelectedListener { onItemSelected { adapterView, view, i, l -> updateTable() } }
+        val now = Calendar.getInstance()
+
+        now.set(Calendar.DAY_OF_MONTH, 1)
+        fromDate = savedInstanceState?.getSerializable("fromDate") as? Date ?: now.time
+        now.set(Calendar.DAY_OF_MONTH, now.getActualMaximum(Calendar.DAY_OF_MONTH))
+        toDate = savedInstanceState?.getSerializable("toDate") as? Date ?: now.time
+
+        val fromDatePicker = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            now.set(Calendar.YEAR, year)
+            now.set(Calendar.MONTH, monthOfYear)
+            now.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            now.set(Calendar.HOUR_OF_DAY, 0)
+            now.set(Calendar.MINUTE, 0)
+            now.set(Calendar.SECOND, 0)
+            now.set(Calendar.MILLISECOND, 0)
+            fromDate = now.time
+            with(find<EditText>(R.id.from_date)) {
+                val text = String.format("%02d.%02d.%d", dayOfMonth, monthOfYear + 1, year)
+                setText(text)
+            }
+            updateTable()
         }
+
+        val toDatePicker = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            now.set(Calendar.YEAR, year)
+            now.set(Calendar.MONTH, monthOfYear)
+            now.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            now.set(Calendar.HOUR_OF_DAY, 23)
+            now.set(Calendar.MINUTE, 59)
+            now.set(Calendar.SECOND, 59)
+            now.set(Calendar.MILLISECOND, 999)
+            toDate = now.time
+            with(find<EditText>(R.id.to_date)) {
+                val text = String.format("%02d.%02d.%d", dayOfMonth, monthOfYear + 1, year)
+                setText(text)
+            }
+            updateTable()
+        }
+
+        with(find<EditText>(R.id.from_date)) {
+            setText(dd_mm_yy.format(fromDate))
+            isFocusable = false
+            setOnClickListener {
+                val myCalendar = Calendar.getInstance()
+                myCalendar.time = fromDate
+                DatePickerDialog(this@LogActivity, fromDatePicker, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show()
+            }
+        }
+        with(find<EditText>(R.id.to_date)) {
+            setText(dd_mm_yy.format(toDate))
+            isFocusable = false
+            setOnClickListener {
+                val myCalendar = Calendar.getInstance()
+                myCalendar.time = toDate
+                DatePickerDialog(this@LogActivity, toDatePicker, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show()
+            }
+        }
+        updateTable()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_activity_log, menu);
+        menuInflater.inflate(R.menu.menu_activity_log, menu)
         return true;
     }
 
@@ -71,16 +128,15 @@ class LogActivity : AppCompatActivity() {
     }
 
     private fun share(): Boolean {
-        val part = selectedPart()
-        if (part == null) {
-            toast("Не выбран журнал")
-            return false
-        }
-
-        val outputFile = File(applicationContext.externalCacheDir, part.name)
-        FileOutputStream(outputFile).use {
-            it.write(part.sharableView())
-            it.flush()
+        val outputFile = File(applicationContext.externalCacheDir, find<EditText>(R.id.from_date).text.toString() + "-" + find<EditText>(R.id.to_date).text.toString() + ".csv")
+        val utf8bom = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
+        val fos = FileOutputStream(outputFile)
+        BufferedWriter(OutputStreamWriter(fos)).use { out ->
+            fos.write(utf8bom)
+            data.forEach {
+                out.write(it.toExternalCsvLine())
+                out.newLine()
+            }
         }
 
         val path = FileProvider.getUriForFile(this, "ru.jdev.q5.fileprovider", outputFile)
@@ -93,10 +149,10 @@ class LogActivity : AppCompatActivity() {
     }
 
     private fun sort(): Boolean {
-        if (trxComparator == trxDateComparator) {
-            trxComparator = trxSumComparator
+        trxComparator = if (trxComparator == trxDateComparator) {
+            trxSumComparator
         } else {
-            trxComparator = trxDateComparator
+            trxDateComparator
         }
         updateTable()
         return true
@@ -110,15 +166,15 @@ class LogActivity : AppCompatActivity() {
         val table = find<TableLayout>(R.id.table)
 
         table.removeAllViews()
-        val part = selectedPart()
         // сейчас что сортировка по дате, что по сумме интересует по убыванию, так что компараторы сортируют по возрастанию,
         // а "оборачиваем" здесь
-        val trxes = (part?.list()?.toList() ?: listOf()).sortedWith(trxComparator).asReversed()
+        data = log.find(fromDate, toDate)
+        val trxes = ArrayList(data).sortedWith(trxComparator).asReversed()
         trxes.forEach { trx ->
             val row = createRow(dateFormat.format(trx.date.dateTime), trx.sum, trx.category)
             row.onClick {
                 val configIntent = Intent(this, EnterSumActivity::class.java)
-                configIntent.putExtra(EnterSumActivity.logPartExtra, part!!.name)
+                configIntent.putExtra(EnterSumActivity.logPartExtra, trx.logPart)
                 configIntent.putExtra(EnterSumActivity.trxIdExtra, trx.id)
                 configIntent.putExtra("sum", trx.sum)
                 configIntent.putExtra("category", trx.category)
@@ -133,12 +189,6 @@ class LogActivity : AppCompatActivity() {
         val fmt = NumberFormat.getCurrencyInstance()
         val row = createRow("", fmt.format(trxes.sumByDouble { it.sum.replace(',', '.').toDouble() }), "Итого")
         table.addView(row)
-    }
-
-    private fun selectedPart(): LogPart? {
-        val partName = find<Spinner>(R.id.log_part).selectedItem as String?
-        val part = partName?.let { log.part(it) }
-        return part
     }
 
     private fun createRow(date: String, sum: String, category: String): TableRow {

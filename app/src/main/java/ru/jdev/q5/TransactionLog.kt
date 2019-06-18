@@ -10,18 +10,16 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-private val UTF_8_BOM = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
+val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
 
 class TransactionLog(private val context: Context) {
 
-    private val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
-
-    fun storeTrx(logPart: String?, trx: Transaction): Boolean {
+    fun storeTrx(trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {
             return false
         }
 
-        val file = File(context.getExternalFilesDir(null), logPart ?: trxFileNameFormat.format(Date()))
+        val file = File(context.getExternalFilesDir(null), trx.logPart ?: trxFileNameFormat.format(trx.date.dateTime))
         Log.d("storeTrx", "${file.parentFile.exists()}")
         if (!file.parentFile.exists()) {
             Log.d("storeTrx", "Creating Q5 dir")
@@ -31,12 +29,12 @@ class TransactionLog(private val context: Context) {
         return true
     }
 
-    fun deleteTrx(logPart: String?, id: Int): Boolean {
+    fun deleteTrx(logPart: String, id: Int): Boolean {
         if (!isExternalStorageWritable()) {
             return false
         }
 
-        val file = File(context.getExternalFilesDir(null), logPart ?: trxFileNameFormat.format(Date()))
+        val file = File(context.getExternalFilesDir(null), logPart)
         Log.d("deleteTrx", "${file.parentFile.exists()}")
         if (!file.parentFile.exists()) {
             Log.d("deleteTrx", "Creating Q5 dir")
@@ -46,9 +44,9 @@ class TransactionLog(private val context: Context) {
         return true
     }
 
-    fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart))
+    private fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart))
 
-    fun partNames(): List<String> {
+    private fun partNames(): List<String> {
         Log.d("transactionLog", "partsFiles")
         if (context.getExternalFilesDir(null)?.exists() != true) {
             return listOf()
@@ -69,12 +67,22 @@ class TransactionLog(private val context: Context) {
         return false
     }
 
+    fun find(fromDate: Date, toDate: Date): List<Transaction> {
+        val res = ArrayList<Transaction>()
+        partNames()
+                .map { part(it) }
+                .map { part ->
+                    res.addAll(part.list().filter { it.date.dateTime in fromDate..toDate })
+                }
+        return res
+    }
+
 }
 
-class LogPart(private val content: File) {
+class LogPart(content: File) {
 
     val name: String = content.name
-    private val transactions = QCollection(content, { line -> parse(line) }, { it -> it.toCsvLine() })
+    private val transactions = QCollection(content, { line -> parse(name, line) }, { it.toCsvLine() })
 
     fun list(): List<Transaction> = transactions.list()
 
@@ -88,23 +96,6 @@ class LogPart(private val content: File) {
         transactions.delete(id)
         transactions.persist()
         return this
-    }
-
-    fun sharableView(): ByteArray {
-        val file = content
-        Log.d("LogPart", "Sharing file: ${file.name}")
-        if (!file.exists()) {
-            return UTF_8_BOM
-        }
-        val out = ByteArrayOutputStream()
-        val writer = BufferedWriter(OutputStreamWriter(out, "UTF-8"))
-        out.write(UTF_8_BOM)
-        list().forEach {
-            writer.write(it.toExternalCsvLine()); writer.newLine()
-        }
-        writer.flush()
-        Log.d("LogPart", "Out: ${String(out.toByteArray())}")
-        return out.toByteArray()
     }
 
     override fun toString(): String = name

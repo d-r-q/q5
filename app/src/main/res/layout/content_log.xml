@@ -13,24 +13,31 @@
     tools:context="ru.jdev.q5.LogActivity"
     tools:showIn="@layout/activity_log">
 
-    <Spinner
-        android:id="@+id/log_part"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+    <EditText
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:ems="10"
+            android:id="@+id/from_date" android:layout_alignParentStart="true"
+    />
+    <EditText
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:ems="10"
+            android:id="@+id/to_date" android:layout_alignParentEnd="true"/>
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/log_part"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/from_date"
+            android:layout_centerInParent="true">
 
         <TableLayout
-            android:id="@+id/table"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="2"
-            android:shrinkColumns="2">
+                android:id="@+id/table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="2"
+                android:shrinkColumns="2">
 
         </TableLayout>
 

@@ -17,7 +17,7 @@ class TransactionsParsingTest {
                 lines
                         ?.filter { it.trim().isNotEmpty() }
                         ?.forEachIndexed { idx, str ->
-                            val t = Transaction.parse(IndexedValue(idx, str))
+                            val t = Transaction.parse(month.toString(), IndexedValue(idx, str))
                             if (str.contains("\",\"")) {
                                 val c = Calendar.getInstance()
                                 c.time = t.date.dateTime

@@ -29,7 +29,7 @@ class FastSaveService : IntentService("FastSaveService") {
             Log.d("FastSaveService", nId.toString())
             manager.cancel(nId)
             val trx = intent.getSerializableExtra("trx") as Transaction
-            if (!trxLog.storeTrx(null, trx)) {
+            if (!trxLog.storeTrx(trx)) {
                 mHandler.post { toast("Внешнее хранилище недоступно") }
             } else {
                 mHandler.post { toast("Транзакция сохранена") }

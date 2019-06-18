@@ -67,10 +67,10 @@ class EnterSumActivity : Activity() {
             }
         }
         with(find<Button>(R.id.delete_trx_button)) {
-            if (id != null && id >= 0) {
-                visibility = VISIBLE
+            visibility = if (id != null && id >= 0) {
+                VISIBLE
             } else {
-                visibility = GONE
+                GONE
             }
             setOnClickListener {
                 if (onDelete(logPart, id!!)) {
@@ -101,14 +101,14 @@ class EnterSumActivity : Activity() {
             toast("Неверный формат времени (чч:мм)")
             return false
         }
-        if (!trxLog.storeTrx(logPart, Transaction(id, sum, category, comment, source, TrxDate(date, time)))) {
+        if (!trxLog.storeTrx(Transaction(id, sum, category, comment, source, TrxDate(date, time), logPart))) {
             toast("Внешнее хранилище недоступно")
             return false
         }
         return true
     }
 
-    private fun onDelete(logPart: String?, id: Int): Boolean {
+    private fun onDelete(logPart: String, id: Int): Boolean {
         if (!trxLog.deleteTrx(logPart, id)) {
             toast("Ошибка удаления")
             return false
