@@ -2,6 +2,7 @@ package ru.jdev.q5
 
 import org.junit.Assert
 import org.junit.Test
+import ru.jdev.q5.gathering.parseSms
 
 class IncomingSmsTest {
 

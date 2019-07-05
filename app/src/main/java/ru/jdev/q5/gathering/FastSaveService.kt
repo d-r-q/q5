@@ -1,4 +1,4 @@
-package ru.jdev.q5
+package ru.jdev.q5.gathering
 
 import android.app.IntentService
 import android.app.NotificationManager
@@ -7,6 +7,8 @@ import android.content.Intent
 import android.os.Handler
 import android.util.Log
 import org.jetbrains.anko.toast
+import ru.jdev.q5.Transaction
+import ru.jdev.q5.TransactionLog
 
 
 class FastSaveService : IntentService("FastSaveService") {
@@ -20,7 +22,7 @@ class FastSaveService : IntentService("FastSaveService") {
     }
 
     override fun onHandleIntent(intent: Intent?) {
-        val log = Log(this)
+        val log = ru.jdev.q5.Log(this)
         log.print("FastSaveService started")
         if (intent != null) {
             log.print("intent is not null")

@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
+import ru.jdev.q5.gathering.Check
 import java.util.*
 
 
@@ -19,7 +20,7 @@ class EnterSumActivity : Activity() {
     private val trxLog = TransactionLog(this)
     private lateinit var categories: Categories
     private lateinit var source: String
-    private var smsCheck: SmsCheck? = null
+    private var check: Check? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +29,7 @@ class EnterSumActivity : Activity() {
 
         val logPart = intent.getStringExtra(logPartExtra)
         val id = intent.getIntExtra(trxIdExtra, -1).takeIf { it != -1 }
-        smsCheck = intent.getSerializableExtra("smsCheck") as SmsCheck?
+        check = intent.getSerializableExtra("smsCheck") as Check?
         source = intent.getStringExtra(sourceExtra) ?: "unknown"
         val category = intent.getStringExtra("category") ?: ""
         val sum = intent.getStringExtra("sum") ?: ""
@@ -36,7 +37,7 @@ class EnterSumActivity : Activity() {
         val date = intent.getStringExtra("date") ?: trxDate.date()
         val time = intent.getStringExtra("time") ?: trxDate.time()
 
-        Log.d("onCreate", smsCheck?.toString() ?: "null")
+        Log.d("onCreate", check?.toString() ?: "null")
 
         setContentView(R.layout.activity_enter_sum)
 
@@ -86,8 +87,8 @@ class EnterSumActivity : Activity() {
         val category = find<Spinner>(R.id.category_input).selectedItem.toString()
         val date = find<EditText>(R.id.date_input).text.toString()
         val time = find<EditText>(R.id.time_input).text.toString()
-        if (smsCheck != null) {
-            categories.categoryAssigned(smsCheck!!, category)
+        if (check != null) {
+            categories.categoryAssigned(check!!, category)
         }
         if (sum.isBlank()) {
             toast("Введите сумму")

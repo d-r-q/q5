@@ -1,6 +1,7 @@
 package ru.jdev.q5
 
 import android.content.Context
+import ru.jdev.q5.gathering.Check
 import ru.jdev.q5.storage.Item
 import ru.jdev.q5.storage.QCollection
 import java.io.File
@@ -29,17 +30,17 @@ class Categories(private val context: Context) {
         }
     }
 
-    fun categoryAssigned(smsCheck: SmsCheck, category: String) {
+    fun categoryAssigned(check: Check, category: String) {
         with(context.getSharedPreferences("place2category", Context.MODE_PRIVATE).edit()) {
-            putString(smsCheck.place, category)
+            putString(check.place, category)
             apply()
         }
         android.util.Log.d("onOk", "place2category item applied")
     }
 
-    fun detectCategory(smsCheck: SmsCheck): String? = with(context.getSharedPreferences("place2category", Context.MODE_PRIVATE)) {
+    fun detectCategory(check: Check): String? = with(context.getSharedPreferences("place2category", Context.MODE_PRIVATE)) {
         for ((place, category) in all) {
-            if (category is String && place == smsCheck.place) {
+            if (category is String && place == check.place) {
                 return@with category
             }
         }

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 28
@@ -7,8 +8,8 @@ android {
         applicationId "ru.jdev.q5"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 32
-        versionName "33.0"
+        versionCode 34
+        versionName "34.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
