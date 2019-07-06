@@ -2,6 +2,7 @@ package ru.jdev.q5
 
 import android.app.Activity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -10,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import org.jetbrains.anko.find
+import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
 import ru.jdev.q5.gathering.Check
 import java.util.*
@@ -74,9 +76,19 @@ class EnterSumActivity : Activity() {
                 GONE
             }
             setOnClickListener {
-                if (onDelete(logPart, id!!)) {
-                    finish()
+                val builder = AlertDialog.Builder(this@EnterSumActivity)
+                builder.setTitle("Подтвердите удаление")
+                builder.setMessage("Удалить транзакцию:\n $sum - $category")
+                builder.setPositiveButton("Да") { _, _ ->
+                    if (onDelete(logPart, id!!)) {
+                        finish()
+                    } else {
+                        toast("Ошибка удаления")
+                    }
                 }
+                builder.setNegativeButton("Нет", { _, _ -> /* noop */})
+                val dialog = builder.create()
+                dialog.show()
             }
         }
     }
