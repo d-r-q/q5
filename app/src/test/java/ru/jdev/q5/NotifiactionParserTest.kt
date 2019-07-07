@@ -20,7 +20,7 @@ class NotifiactionParserTest {
         val check = parseNotification("Travelers coffee", "1 682,00 \u20BD с карты Mastercard **** 0000")
         assertNotNull(check)
         assertEquals("Travelers coffee", check!!.place)
-        assertEquals("1 682,00", check.sum)
+        assertEquals("1682,00", check.sum)
     }
 
     @Test
@@ -42,7 +42,7 @@ class NotifiactionParserTest {
                         .trimMargin())
         assertNotNull(check)
         assertEquals("CKASSA, YAROSLAVL.", check!!.place)
-        assertEquals("1 215.00", check.sum)
+        assertEquals("1215.00", check.sum)
     }
 
     @Test
@@ -60,7 +60,7 @@ class NotifiactionParserTest {
                 "**0000 Pokupka Uspeshno Summa: 1 309,51 RUR Ostatok: 2 315,19 RUR RU/Novosibirsk/YARMARKA DOBRYANKA 04.07.2019 15:22:04")
         assertNotNull(check)
         assertEquals("RU/Novosibirsk/YARMARKA DOBRYANKA", check!!.place)
-        assertEquals("1 309,51", check.sum)
+        assertEquals("1309,51", check.sum)
     }
 
     @Test
@@ -69,7 +69,7 @@ class NotifiactionParserTest {
                 "Списание со счета 408*09352 на сумму 1,770.00 RUR; 06.07.2019 18:27:09.")
         assertNotNull(check)
         assertNull(check!!.place)
-        assertEquals("1,770.00", check.sum)
+        assertEquals("1770.00", check.sum)
     }
 
     @Test
@@ -85,7 +85,7 @@ class NotifiactionParserTest {
                 "5 000 \u20BD - Баланс 00 000 \u20BD МИР ** 0677")
         assertNotNull(check)
         assertEquals("Сбербанк Онлайн", check!!.place)
-        assertEquals("5 000", check.sum)
+        assertEquals("5000", check.sum)
     }
 
     @Test
