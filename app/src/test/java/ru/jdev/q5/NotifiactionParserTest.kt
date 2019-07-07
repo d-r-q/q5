@@ -1,7 +1,6 @@
 package ru.jdev.q5
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.*
 import org.junit.Test
 import ru.jdev.q5.gathering.parseNotification
 
@@ -62,6 +61,22 @@ class NotifiactionParserTest {
         assertNotNull(check)
         assertEquals("RU/Novosibirsk/YARMARKA DOBRYANKA", check!!.place)
         assertEquals("1 309,51", check.sum)
+    }
+
+    @Test
+    fun testAlfa3() {
+        val check = parseNotification("Уведомление",
+                "Списание со счета 408*09352 на сумму 1,770.00 RUR; 06.07.2019 18:27:09.")
+        assertNotNull(check)
+        assertNull(check!!.place)
+        assertEquals("1,770.00", check.sum)
+    }
+
+    @Test
+    fun testAlfa4() {
+        val check = parseNotification("Уведомление",
+                "**0000 Postupleniye Summa: 1 000 RUR Ostatok: 0 000,00 RUR 07.07.2019 Podrobnosti v mobilnom banke")
+        assertNull(check)
     }
 
     @Test

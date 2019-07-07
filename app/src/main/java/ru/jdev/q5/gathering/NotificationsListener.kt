@@ -18,10 +18,6 @@ class NotificationsListener : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        for (key in sbn.notification.extras.keySet()) {
-            log.print("""$key=${sbn.notification.extras[key]}""")
-        }
-
         val extras: Bundle = sbn.notification.extras
         val text = extras.getCharSequence("android.text")?.toString() ?: "null"
         val title = extras.getString("android.title") ?: "null"
