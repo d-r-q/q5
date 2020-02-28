@@ -10,7 +10,7 @@ import java.util.*
 
 class Log(context: Context) {
 
-    private val file = File(context.getExternalFilesDir(null), "log.txt")
+    private val file by lazy { File(context.getExternalFilesDir(null), "log.txt") }
     private val dateFormat = SimpleDateFormat("yy.MM.dd HH:mm")
 
     fun print(msg: String) {

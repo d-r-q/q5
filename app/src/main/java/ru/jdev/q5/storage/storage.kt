@@ -36,9 +36,8 @@ class QCollection<T : Item>(private val source: File, parse: (IndexedValue<Strin
         }
     }
 
-    fun delete(id: Int) {
-        elements.removeAt(id)
-    }
+    fun delete(id: Int): T =
+            elements.removeAt(id)
 
     fun persist() {
         val content = elements.joinToString("\n") { serialize(it) }

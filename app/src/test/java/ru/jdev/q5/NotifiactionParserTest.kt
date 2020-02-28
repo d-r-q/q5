@@ -80,6 +80,15 @@ class NotifiactionParserTest {
     }
 
     @Test
+    fun testAlfa5() {
+        val check = parseNotification("Уведомление",
+                "**0000; Покупка совершена успешно. Сумма: 437,45 RUB; Остаток: 8 848,32 RUB; Птицефабрика «Октябрьская»; 26 февраля 2020 08:56")
+        assertNotNull(check)
+        assertEquals("Птицефабрика «Октябрьская»", check!!.place)
+        assertEquals("437,45", check.sum)
+    }
+
+    @Test
     fun testSber1() {
         val check = parseNotification("Перевод Сбербанк Онлайн",
                 "5 000 \u20BD - Баланс 00 000 \u20BD МИР ** 0677")

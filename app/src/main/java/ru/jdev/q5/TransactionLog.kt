@@ -14,6 +14,8 @@ val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
 
 class TransactionLog(private val context: Context) {
 
+    private val log = Log(context)
+
     fun storeTrx(trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {
             return false
@@ -25,7 +27,7 @@ class TransactionLog(private val context: Context) {
             Log.d("storeTrx", "Creating Q5 dir")
             file.parentFile.mkdirs()
         }
-        LogPart(file).with(trx)
+        LogPart(file, log).with(trx)
         return true
     }
 
@@ -40,11 +42,11 @@ class TransactionLog(private val context: Context) {
             Log.d("deleteTrx", "Creating Q5 dir")
             file.parentFile.mkdirs()
         }
-        LogPart(file).delete(id)
+        LogPart(file, log).delete(id)
         return true
     }
 
-    private fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart))
+    private fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart), log)
 
     private fun partNames(): List<String> {
         Log.d("transactionLog", "partsFiles")
@@ -79,7 +81,7 @@ class TransactionLog(private val context: Context) {
 
 }
 
-class LogPart(content: File) {
+class LogPart(content: File, val log: ru.jdev.q5.Log) {
 
     val name: String = content.name
     private val transactions = QCollection(content, { line -> parse(name, line) }, { it.toCsvLine() })
@@ -88,12 +90,14 @@ class LogPart(content: File) {
 
     fun with(trx: Transaction): LogPart {
         transactions.with(trx)
+        log.print("Saving trx: " + trx.toExternalCsvLine())
         transactions.persist()
         return this
     }
 
     fun delete(id: Int): LogPart {
-        transactions.delete(id)
+        val deleted = transactions.delete(id)
+        log.print("Deleting trx: " + deleted.toExternalCsvLine())
         transactions.persist()
         return this
     }

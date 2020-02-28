@@ -1,5 +1,6 @@
 package ru.jdev.q5
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -20,7 +21,6 @@ import java.math.BigDecimal
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import android.app.DatePickerDialog
 
 class LogActivity : AppCompatActivity() {
 
