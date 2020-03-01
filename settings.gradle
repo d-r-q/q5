@@ -1,1 +1,2 @@
+include ':q5-core'
 include ':app'

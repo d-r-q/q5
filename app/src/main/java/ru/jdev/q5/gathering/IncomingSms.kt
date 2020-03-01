@@ -1,20 +1,10 @@
 package ru.jdev.q5.gathering
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.provider.Telephony
-import android.support.v4.app.NotificationCompat
-import android.telephony.SmsMessage
 import android.util.Log
-import ru.jdev.q5.Categories
-import ru.jdev.q5.EnterSumActivity
-import ru.jdev.q5.R
-import ru.jdev.q5.Transaction
 import java.io.Serializable
 
 
@@ -57,7 +47,6 @@ fun parseSms(text: String): Check? {
 }
 
 private fun parseAlfaBankSms(text: String): Check? {
-    // **3239 Pokupka Uspeshno Summa: 1 143 RUR Ostatok: 9 197,93 RUR RU/KOLTSOVO/TONUS 15.09.2018 08:47:30
     val match = """.*Summa: ((\d+ ?)+(,\d+)?) (RUR|EUR|USD).*(RUR|EUR|USD) (.*) [\d.: ]{19}""".toRegex().matchEntire(text)
     return if (match != null) {
         Check(match.groups[1]!!.value.replace(" ", ""), match.groups[6]!!.value, text)
