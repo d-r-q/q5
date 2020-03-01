@@ -10,7 +10,7 @@ val patterns = arrayOf(
         // Alfa
         CheckPattern("Уведомление$split.*Pokupka.*Summa: ([\\d,. ]*) .* RUR (.*) \\d{2}\\..*".toRegex(), 1, 2),
         CheckPattern(".*Списание.*сумму ([\\d,. ]+) .*;.*".toRegex(), 1, null),
-        CheckPattern(".*Покупка совершена успешно\\. Сумма: ([\\d,.]+).*; (.*);.*".toRegex(), 1, 2),
+        CheckPattern(".*Покупка совершена успешно\\. Сумма: ([\\d,. ]+).*; (.*);.*".toRegex(), 1, 2),
         // Sber
         CheckPattern("(Перевод|Покупка) (.*)$split([\\d,. ]*) .*".toRegex(), 3, 2)
 )
