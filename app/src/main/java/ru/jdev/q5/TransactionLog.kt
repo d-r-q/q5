@@ -6,15 +6,13 @@ import android.os.Environment
 import android.util.Log
 import ru.jdev.q5.Transaction.Companion.parse
 import ru.jdev.q5.storage.QCollection
-import java.io.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 val trxFileNameFormat = SimpleDateFormat("yyMM'-${Build.DEVICE}-v2.csv'")
 
 class TransactionLog(private val context: Context) {
-
-    private val log = Log(context)
 
     fun storeTrx(trx: Transaction): Boolean {
         if (!isExternalStorageWritable()) {
@@ -27,7 +25,7 @@ class TransactionLog(private val context: Context) {
             Log.d("storeTrx", "Creating Q5 dir")
             file.parentFile.mkdirs()
         }
-        LogPart(file, log).with(trx)
+        LogPart(file).with(trx)
         return true
     }
 
@@ -42,11 +40,11 @@ class TransactionLog(private val context: Context) {
             Log.d("deleteTrx", "Creating Q5 dir")
             file.parentFile.mkdirs()
         }
-        LogPart(file, log).delete(id)
+        LogPart(file).delete(id)
         return true
     }
 
-    private fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart), log)
+    private fun part(logPart: String): LogPart = LogPart(File(context.getExternalFilesDir(null), logPart))
 
     private fun partNames(): List<String> {
         Log.d("transactionLog", "partsFiles")
@@ -81,23 +79,26 @@ class TransactionLog(private val context: Context) {
 
 }
 
-class LogPart(content: File, val log: ru.jdev.q5.Log) {
+class LogPart(content: File) {
+
+    private val tag = logTag<LogPart>()
 
     val name: String = content.name
+
     private val transactions = QCollection(content, { line -> parse(name, line) }, { it.toCsvLine() })
 
     fun list(): List<Transaction> = transactions.list()
 
     fun with(trx: Transaction): LogPart {
         transactions.with(trx)
-        log.print("Saving trx: " + trx.toExternalCsvLine())
+        Log.d(tag(), "Saving trx: " + trx.toExternalCsvLine())
         transactions.persist()
         return this
     }
 
     fun delete(id: Int): LogPart {
         val deleted = transactions.delete(id)
-        log.print("Deleting trx: " + deleted.toExternalCsvLine())
+        Log.d(tag(), "Deleting trx: " + deleted.toExternalCsvLine())
         transactions.persist()
         return this
     }

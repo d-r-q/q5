@@ -1,23 +1,11 @@
 package ru.jdev.q5
 
-import android.content.Context
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStreamWriter
-import java.text.SimpleDateFormat
-import java.util.*
+inline fun <reified T> logTag() =
+        Tag(T::class.qualifiedName ?: T::class.simpleName ?: T::class.toString())
 
-class Log(context: Context) {
+class Tag(private val prefix: String) {
 
-    private val file by lazy { File(context.getExternalFilesDir(null), "log.txt") }
-    private val dateFormat = SimpleDateFormat("yy.MM.dd HH:mm")
+    operator fun invoke(suffix: String? = null): String =
+            "$prefix${suffix?.let { ".$it" } ?: "" }"
 
-    fun print(msg: String) {
-        android.util.Log.d("q5.Log", msg)
-        BufferedWriter(OutputStreamWriter(FileOutputStream(file, true), "UTF-8")).use {
-            it.write("${dateFormat.format(Date())}: $msg")
-            it.newLine()
-        }
-    }
 }
