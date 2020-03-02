@@ -1,8 +1,11 @@
 package ru.jdev.q5.gathering
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import ru.jdev.q5.logTag
 import java.util.*
 
@@ -18,6 +21,20 @@ class NotificationsListener : NotificationListenerService() {
     override fun onCreate() {
         super.onCreate()
         checkNotifier = CheckNotifier(this)
+        Log.d(tag(), "onCreate")
+    }
+
+    override fun onListenerConnected() {
+        Log.d(tag(), "onListenerConnected")
+    }
+
+    override fun onListenerDisconnected() {
+        Log.d(tag(), "onListenerDisconnected")
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        Log.d(tag(), "OnBind")
+        return super.onBind(intent)
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {

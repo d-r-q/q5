@@ -2,7 +2,6 @@ package ru.jdev.q5
 
 import android.app.Activity
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -10,8 +9,8 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
 import org.jetbrains.anko.find
-import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
 import ru.jdev.q5.gathering.Check
 import java.util.*
@@ -86,7 +85,7 @@ class EnterSumActivity : Activity() {
                         toast("Ошибка удаления")
                     }
                 }
-                builder.setNegativeButton("Нет", { _, _ -> /* noop */})
+                builder.setNegativeButton("Нет") { _, _ -> /* noop */}
                 val dialog = builder.create()
                 dialog.show()
             }

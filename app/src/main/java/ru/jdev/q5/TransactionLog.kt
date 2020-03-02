@@ -48,11 +48,12 @@ class TransactionLog(private val context: Context) {
 
     private fun partNames(): List<String> {
         Log.d("transactionLog", "partsFiles")
-        if (context.getExternalFilesDir(null)?.exists() != true) {
+        val externalFilesDir = context.getExternalFilesDir(null)
+        if (externalFilesDir?.exists() != true) {
             return listOf()
         }
-        return context.getExternalFilesDir(null)
-                .listFiles { file -> file.name.endsWith(".csv") }
+        return externalFilesDir
+                .listFiles { file: File -> file.name.endsWith(".csv") }
                 .map { it.name }
     }
 
