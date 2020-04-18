@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="ru.jdev.q5">
+        package="ru.jdev.q5">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
             android:allowBackup="true"
             android:icon="@drawable/icon"
             android:label="@string/app_name"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:name=".Q5App">
+
+        <activity android:name=".gathering.patterns.CheckPatternsActivity"
+                android:exported="true"/>
+        <activity
+                android:name=".gathering.patterns.EditCheckPatternActivity"
+                android:exported="true"
+                android:label="@string/title_activity_edit_check_pattern"
+                android:theme="@style/AppTheme.NoActionBar" />
+
         <service
                 android:name=".gathering.NotificationsListener"
                 android:enabled="true"
                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
@@ -29,42 +38,43 @@
                 android:grantUriPermissions="true">
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/filepaths"/>
+                    android:resource="@xml/filepaths" />
         </provider>
 
         <receiver android:name=".Q5Widget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                     android:name="android.appwidget.provider"
-                    android:resource="@xml/q5_widget_info"/>
+                    android:resource="@xml/q5_widget_info" />
         </receiver>
-        <receiver android:name=".gathering.IncomingSms"
+        <receiver
+                android:name=".gathering.IncomingSms"
                 android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
         <activity
                 android:name=".EnterSumActivity"
-                android:windowSoftInputMode="stateAlwaysVisible">
-        </activity>
+                android:exported="true"
+                android:windowSoftInputMode="stateAlwaysVisible" />
 
         <service
                 android:name=".gathering.FastSaveService"
-                android:exported="false"/>
+                android:exported="false" />
 
         <activity
                 android:name=".LogActivity"
                 android:label="@string/title_activity_log"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

@@ -16,7 +16,7 @@ class NotificationsListener : NotificationListenerService() {
 
     private lateinit var checkNotifier: CheckNotifier
 
-    private val processed: MutableMap<Int, Int> = WeakHashMap<Int, Int>()
+    private val processed: MutableMap<Int, Int> = WeakHashMap()
 
     override fun onCreate() {
         super.onCreate()
@@ -38,17 +38,28 @@ class NotificationsListener : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        if (sbn.id in processed) {
-            return
-        }
-        val extras: Bundle = sbn.notification.extras
-        val text = extras.getCharSequence("android.text")?.toString() ?: "null"
-        val title = extras.getString("android.title") ?: "null"
+        try {
+            Log.v(tag(), "onNotificationPosted")
+            if (sbn.id in processed) {
+                return
+            }
+            val extras: Bundle = sbn.notification.extras
+            val pkg = sbn.packageName
+            val text = extras.getCharSequence("android.text")?.toString() ?: "null"
+            val title = extras.getString("android.title") ?: "null"
+            if (pkg.contains("(alfa|sber|kukur|google)".toRegex())) {
+                Log.i(tag(), "Check candidate: $title, $text")
+            }
 
-        val check = parseNotification(title, text)
-        if (check != null) {
-            checkNotifier.handleCheck(check)
-            processed[sbn.id] = sbn.id
+            val check = parseNotification(title, text)
+            if (check != null) {
+                checkNotifier.handleCheck(check)
+                processed[sbn.id] = sbn.id
+            } else {
+                Log.i(tag(), "Check failed")
+            }
+        } catch (t: Throwable) {
+            t.printStackTrace()
         }
     }
 }

@@ -68,5 +68,3 @@ private fun parseKukuruzaSms(text: String): Check? {
     return Check(sum, parts[3], text)
 }
 
-class Check(val sum: String?, val place: String?, val fullText: String) : Serializable
-

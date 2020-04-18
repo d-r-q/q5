@@ -3,16 +3,21 @@ package ru.jdev.q5
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.content.FileProvider
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.*
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.FileProvider
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
+import ru.jdev.q5.gathering.patterns.CheckPatternsActivity
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileOutputStream
@@ -118,13 +123,17 @@ class LogActivity : AppCompatActivity() {
         return true;
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.share) {
-            return share()
-        } else if (item?.itemId == R.id.sort) {
-            return sort()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.share -> share()
+            R.id.sort -> sort()
+            R.id.settings -> {
+                val configIntent = Intent(this, CheckPatternsActivity::class.java)
+                startActivity(configIntent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun share(): Boolean {
