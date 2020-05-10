@@ -60,9 +60,12 @@ class EditCheckPatternActivity : AppCompatActivity() {
 
     private fun updateCheckPattern(any: Editable?) {
         val pattern = checkPatternText.str().toRegexOrNull() ?: return
-        val checkPattern = CheckPattern(form.checkPattern.id, checkPatternNameText.str(), pattern, sumGroupText.str().toInt(), placeGroupText.str().toIntOrNull())
-        form.onCheckPatternUpdated(checkPattern)
-        checkFragment.listView.adapter?.notifyDataSetChanged()
+        val sumGroupIdx = sumGroupText.str().takeIf { it.isNotEmpty() }?.toInt()
+        if (sumGroupIdx != null) {
+            val checkPattern = CheckPattern(form.checkPattern.id, checkPatternNameText.str(), pattern, sumGroupIdx, placeGroupText.str().toIntOrNull())
+            form.onCheckPatternUpdated(checkPattern)
+            checkFragment.listView.adapter?.notifyDataSetChanged()
+        }
     }
 
 }
