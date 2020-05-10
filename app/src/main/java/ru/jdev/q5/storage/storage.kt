@@ -14,13 +14,13 @@ class QCollection<T : Item>(private val source: File, parse: (IndexedValue<Strin
 
     private val elements: ArrayList<T> =
             if (source.exists()) {
-                Log.d("QCollection", "Load data from ${source.absolutePath}")
+                Log.v("QCollection", "Load data from ${source.absolutePath}")
                 FileInputStream(source).bufferedReader().lineSequence()
                         .withIndex()
                         .map { parse(it) }
                         .toCollection(ArrayList<T>())
             } else {
-                Log.d("QCollection", "No data file found, create parent dirs at ${source.parentFile.absolutePath}")
+                Log.v("QCollection", "No data file found, create parent dirs at ${source.parentFile.absolutePath}")
                 source.parentFile.mkdirs()
                 ArrayList<T>()
             }

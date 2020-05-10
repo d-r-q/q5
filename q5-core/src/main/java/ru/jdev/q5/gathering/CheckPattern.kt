@@ -3,7 +3,7 @@ package ru.jdev.q5.gathering
 import java.util.*
 
 
-data class CheckPattern(val id: UUID = UUID.randomUUID(), val name: String, val pattern: Regex, val sumGroupIdx: Int, val placeGroupIdx: Int?) {
+data class CheckPattern(val id: UUID, val name: String, val pattern: Regex, val sumGroupIdx: Int, val placeGroupIdx: Int?) {
 
     fun tryParse(check: String): Check? {
         val result = pattern.matchEntire(check) ?: return null

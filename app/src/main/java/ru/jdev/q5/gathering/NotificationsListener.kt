@@ -6,6 +6,7 @@ import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import ru.jdev.q5.gathering.patterns.CheckPatternsModule
 import ru.jdev.q5.logTag
 import java.util.*
 
@@ -39,7 +40,6 @@ class NotificationsListener : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         try {
-            Log.v(tag(), "onNotificationPosted")
             if (sbn.id in processed) {
                 return
             }
@@ -51,15 +51,13 @@ class NotificationsListener : NotificationListenerService() {
                 Log.i(tag(), "Check candidate: $title, $text")
             }
 
-            val check = parseNotification(title, text)
+            val check = CheckParser().tryParse(CheckPatternsModule.checkPatterns.listPatterns(), "$title\n$text")
             if (check != null) {
                 checkNotifier.handleCheck(check)
                 processed[sbn.id] = sbn.id
-            } else {
-                Log.i(tag(), "Check failed")
             }
         } catch (t: Throwable) {
-            t.printStackTrace()
+            Log.e(tag(), "Notification handling error", t)
         }
     }
 }

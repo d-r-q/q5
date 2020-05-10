@@ -8,7 +8,7 @@ import kotlin.collections.ArrayList
 
 class EditCheckParserForm(private val checkPatterns: CheckPatterns) {
 
-    var checkPattern = CheckPattern(name = "Шаблон чека", pattern = "$.+^".toRegex(), sumGroupIdx = 0, placeGroupIdx = null)
+    var checkPattern = CheckPattern(UUID.randomUUID(), "Шаблон чека", "$.+^".toRegex(), 0, null)
 
     var checkExamples: MutableList<String> = ArrayList()
 
