@@ -5,6 +5,6 @@ class CheckParser {
 
     fun tryParse(patterns: List<CheckPattern>, checkCnd: String): Check? =
             patterns.mapNotNull { it.tryParse(checkCnd) }
-                    .first()
+                    .firstOrNull()
 
 }
