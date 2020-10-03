@@ -10,8 +10,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="@string/check" />
+            android:text="@string/check"
+            android:inputType="textMultiLine"
+            android:lines="2"
+            />
 
     <TextView
             android:id="@+id/matchesLabelName"

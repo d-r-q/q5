@@ -43,7 +43,7 @@ class CheckRecyclerViewAdapter(private val form: EditCheckParserForm)
         holder.placeView.text = "Место: ${item.place ?: "Не определено"}"
     }
 
-    override fun getItemCount(): Int = form.parseResults().size
+    override fun getItemCount(): Int = form.checkExamples.size
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 

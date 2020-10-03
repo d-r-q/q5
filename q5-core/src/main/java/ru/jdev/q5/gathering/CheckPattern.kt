@@ -1,17 +1,25 @@
 package ru.jdev.q5.gathering
 
 import java.util.*
+import kotlin.math.max
 
 
 data class CheckPattern(val id: UUID, val name: String, val pattern: Regex, val sumGroupIdx: Int, val placeGroupIdx: Int?) {
 
     fun tryParse(check: String): Check? {
-        val result = pattern.matchEntire(check) ?: return null
-        val sum = result.groupValues.elementAtOrNull(sumGroupIdx)
-                ?.takeIf { it.matches("[\\d., ]+".toRegex()) }
-                ?: return null
-        val place = placeGroupIdx?.let { idx -> result.groups[idx]!!.value }?.takeIf { it.isNotBlank() }
-        return Check(normalizeSum(sum), place, check)
+        try {
+            val result = pattern.matchEntire(check)
+            if (result == null || result.groups.size < max(sumGroupIdx, placeGroupIdx ?: 0)) {
+                return null
+            }
+            val sum = result.groupValues.elementAtOrNull(sumGroupIdx)
+                    ?.takeIf { it.matches("[\\d., ]+".toRegex()) }
+                    ?: return null
+            val place = placeGroupIdx?.let { idx -> result.groups[idx]!!.value }?.takeIf { it.isNotBlank() }
+            return Check(normalizeSum(sum), place, check)
+        } catch (e: Exception) {
+            return null
+        }
     }
 
     override fun equals(other: Any?): Boolean {

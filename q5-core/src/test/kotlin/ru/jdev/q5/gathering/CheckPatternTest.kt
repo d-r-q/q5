@@ -1,48 +1,34 @@
 package ru.jdev.q5.gathering
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
+import org.hamcrest.CoreMatchers.nullValue
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import java.util.*
 
 
 class CheckPatternTest {
 
     @Test
-    fun `Test parsing of check matching second pattern`() {
-        // Given list of two pattens and check matching second pattern
-        val patterns = listOf(
-                TestCheckPattern(withPattern = "\\w"),
-                TestCheckPattern(withPattern = ".* (\\d+) .*")
-        )
-        val checkCnd = "abc 10 def"
+    fun `CheckPattern should not fail when sumGroupIdx greater pattern's groups count`() {
+        // Given check pattern with pattern without groups and sumGroupIdx = 2
+        val pattern = createCheckPattern(".*", 2)
 
-        // When the check is parsed using patterns
-        val check = CheckParser().tryParse(patterns, checkCnd)
+        // When it matches any string
+        val check = pattern.tryParse("any")
 
-        // Then it's parsed
-        assertNotNull(check)
-        // and it has correct sum
-        assertEquals("10", check!!.sum)
+        // Then result should be null
+        assertThat(check, nullValue())
     }
 
     @Test
-    fun `Test parsing of check not matching any pattern`() {
-        // Given list of two pattens and check matching second pattern
-        val patterns = listOf(
-                TestCheckPattern(withPattern = ".* (\\d+) .*")
-        )
-        val checkCnd = "abc def"
+    fun `CheckPattern should not fail when placeGroupIdx greater pattern's groups count`() {
+        // Given check pattern with pattern without groups and placeGroupIdx = 3
+        val pattern = createCheckPattern("(.*)", 1, placeGroupIdx = 3)
 
-        // When the check is parsed using patterns
-        val check = CheckParser().tryParse(patterns, checkCnd)
+        // When it matches any string
+        val check = pattern.tryParse("any")
 
-        // Then it's parsed
-        assertNull(check)
+        // Then result should be null
+        assertThat(check, nullValue())
     }
-
-    private fun TestCheckPattern(withPattern: String) =
-            CheckPattern(UUID.randomUUID(), "", withPattern.toRegex(), 1, 1)
 
 }
