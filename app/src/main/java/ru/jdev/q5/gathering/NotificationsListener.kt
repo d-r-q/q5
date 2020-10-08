@@ -49,6 +49,8 @@ class NotificationsListener : NotificationListenerService() {
             val title = extras.getString("android.title") ?: "null"
             if (pkg.contains("(alfa|sber|kukur|google)".toRegex())) {
                 Log.i(tag(), "Check candidate: title: `$title`, text `$text`")
+                Log.i(tag(), "title codes: ${title.map { "$it:${it.toInt()}" }.joinToString()}")
+                Log.i(tag(), "text codes: ${text.map { "$it:${it.toInt()}" }.joinToString()}")
             }
 
             val check = CheckParser().tryParse(CheckPatternsModule.checkPatterns.listPatterns(), "$title\n$text")
