@@ -13,7 +13,7 @@ data class CheckPattern(val id: UUID, val name: String, val pattern: Regex, val 
                 return null
             }
             val sum = result.groupValues.elementAtOrNull(sumGroupIdx)
-                    ?.takeIf { it.matches("[\\d., ]+".toRegex()) }
+                    ?.takeIf { it.matches("[\\d.,\\p{Zs}]+".toRegex()) }
                     ?: return null
             val place = placeGroupIdx?.let { idx -> result.groups[idx]!!.value }?.takeIf { it.isNotBlank() }
             return Check(normalizeSum(sum), place, check)
@@ -50,7 +50,7 @@ data class CheckPattern(val id: UUID, val name: String, val pattern: Regex, val 
 }
 
 fun normalizeSum(sum: String): String {
-    var res = sum.replace(" ", "")
+    var res = sum.replace("\\p{Zs}".toRegex(), "")
     while ((res.indexOf(".") to res.indexOf(",")).let { (dot, comma) -> dot != -1 && comma != -1 && dot != comma } ||
             res.indexOf(".") != res.lastIndexOf(".") ||
             res.indexOf(",") != res.lastIndexOf(",")) {
